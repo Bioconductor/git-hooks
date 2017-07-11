@@ -37,8 +37,8 @@ while read oldrev newrev refname; do
   do
     for FILE  in `git log -1 --name-only --pretty=format:'' $COMMIT`;
     do  
-        size=$(du -k $FILE | cut -f 1)
-        if [$size -ge 5000] ; then
+        size=$(du -k "$FILE" | cut -f 1)
+        if [ $size -ge 5000 ] ; then
             echo "File $FILE larger than 5Mb. Please see Biocondcutor guidelines"
             echo "    https://bioconductor.org/developers/package-guidelines/"
             exit 1
