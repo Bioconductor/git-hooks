@@ -11,7 +11,6 @@
 GITCMD="/usr/bin/git"
 NULLSHA="0000000000000000000000000000000000000000"
 MAXSIZE="5242880" # 5MB limit on file size
-EXIT=0
 
 # Read stdin for ref information
 while read oldref newref refname; do
@@ -34,15 +33,11 @@ while read oldref newref refname; do
       # Compare filesize to MAXSIZE
       if [ "${size}" -gt "${MAXSIZE}" ]; then
         # Send output back to the user about oversized files.
-        echo "ERROR: ${file} larger than ${MAXSIZE}."
-        EXIT=1
+        echo "ERROR: File ${file} larger than 5Mb. Please see Biocondcutor guidelines"
+        echo "    https://bioconductor.org/developers/package-guidelines/"
+        exit 1
       fi # End size comparison
     fi   # End check for empty size
   done   # End list of files
 done     # End reading stdin
-
-# If we have oversized files, write more information out to the user
-if [ "${EXIT}" = "1" ]; then
-  echo "ERROR: Your commit has been blocked due to certain files being oversized."
-  echo "ERROR: Check output above for more information."
-fi
+exit 0
