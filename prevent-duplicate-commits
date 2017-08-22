@@ -25,10 +25,10 @@ MSG = """
 
 # Read in each ref that the user is trying to update
 for line in fileinput.input():
-#    print "pre-recive: Trying to push ref %s" % line
+    print "pre-recive: Trying to push ref %s" % line
     std_input = line.split(" ")
     oldrev, newrev, refname  = std_input[0], std_input[1], std_input[2]
-#    print "old %s, new %s, refname %s" % (oldrev, newrev, refname)
+    print "old %s, new %s, refname %s" % (oldrev, newrev, refname)
     # Get pairs of commits from the revision-list (rev-list)
     # from the parent of the new-rev
     check_pairs = subprocess.check_output(["git", 
