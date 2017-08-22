@@ -37,6 +37,11 @@ for line in fileinput.input():
                                            "-n", "10", newrev]).split("\n")
     # For each of the first 10 pairs, check diff
     for pair in check_pairs:
+        # If first commit is because of a unhealthy merge,
+        # 48a200adb06c5a5be35292f9be842d0c14aabe69 63ba9cfcb5445730fa7d2303c0817dde02c69aee 741b29fe7a801e67945a53b65ec8db67a9e69d82
+        # Line will have 3 commits.
+        if len(pair.split()) > 2:
+            first, second = pair.split()[1:]
         first, second = pair.split()
         out = subprocess.check_output(["git", "diff", first, second])
         if not out:
