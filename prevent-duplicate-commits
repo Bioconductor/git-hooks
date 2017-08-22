@@ -10,5 +10,13 @@ import fileinput
 # Read in each ref that the user is trying to update
 for line in fileinput.input():
     print "pre-recive: Trying to push ref %s" % line
-    
+    std_input = line.split(" ")
+    old_value = std_input[0]
+    new_value = std_input[1]
+    ref_name = std_input[2]
+    print "old value %s" % old_value
+    print "new value %s" % new_value
+    print "ref name %s" % ref_name
+
+
 
