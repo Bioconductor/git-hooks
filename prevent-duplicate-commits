@@ -1,0 +1,14 @@
+#!/usr/bin/env python
+
+#
+# Pre-receive hook that will block any commits which have a history of duplicate commits 
+#
+
+import sys
+import fileinput
+
+# Read in each ref that the user is trying to update
+for line in fileinput.input():
+    print "pre-recive: Trying to push ref %s" % line
+    
+
