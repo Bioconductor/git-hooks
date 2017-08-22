@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import subprocess
 import sys
 import fileinput
@@ -63,6 +65,7 @@ if False:
 for line in fileinput.input():
     std_input = line.split(" ")
     oldrev, newrev, refname  = std_input[0], std_input[1], std_input[2]
+    print "old %s, new %s, ref %s" % (oldrev, newrev, refname)
     commit_list = subprocess.check_output([
         "git", "rev-list", newrev, "-n", "10"
     ])
