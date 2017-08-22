@@ -46,7 +46,7 @@ for line in fileinput.input():
             first, second = pair.split()
         out = subprocess.check_output(["git", "diff", first, second])
         if not out:
-            print("MSG")
+            print(MSG)
             print("First commit  :  %s" % first)
             print("Second commit :  %s" % second)
             sys.exit(1)
