@@ -35,8 +35,7 @@ for line in fileinput.input():
                                            "rev-list",
                                            "--parents",
                                            "-n", "10", newrev]).split("\n")
-    print "check_pairs"
-    print check_pairs
+    check_pairs = [item for item in check_pairs if len(item)>0]
     # For each of the first 10 pairs, check diff
     for pair in check_pairs:
         # If first commit is because of a unhealthy merge,
