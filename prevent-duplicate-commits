@@ -41,6 +41,7 @@ for line in fileinput.input():
         # 48a200adb06c5a5be35292f9be842d0c14aabe69 63ba9cfcb5445730fa7d2303c0817dde02c69aee 741b29fe7a801e67945a53b65ec8db67a9e69d82
         # Line will have 3 commits.
         splitter = pair.split()
+        splitter = [item for item in splitter if len(item)>0]
         print "Splitter: %s" % splitter
         if len(splitter) == 3:
             first, second = splitter[1:]
