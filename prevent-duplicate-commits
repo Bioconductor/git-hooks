@@ -1,11 +1,5 @@
-#!/usr/bin/env python
-
-#
-# Pre-receive hook that will block any commits which have a history of duplicate commits 
-#
-
-import sys
 import subprocess
+import sys
 import fileinput
 
 MSG = """
@@ -23,34 +17,53 @@ MSG = """
 
     """
 
-# Read in each ref that the user is trying to update
-for line in fileinput.input():
-    print "pre-recive: Trying to push ref %s" % line
-    std_input = line.split(" ")
-    oldrev, newrev, refname  = std_input[0], std_input[1], std_input[2]
-    print "old %s, new %s, refname %s" % (oldrev, newrev, refname)
-    # Get pairs of commits from the revision-list (rev-list)
-    # from the parent of the new-rev
-    check_pairs = subprocess.check_output(["git", 
-                                           "rev-list",
-                                           "--parents",
-                                           "-n", "10", newrev]).split("\n")
-    check_pairs = [item for item in check_pairs if len(item)>0]
+def check_commit_pairs(commit_list):
+    print("checking new commit_list")
+    commit_list = commit_list.split("\n")
+    commit_list = [item for item in commit_list if len(item)>0]
     # For each of the first 10 pairs, check diff
-    for pair in check_pairs:
+    body2 = None
+    for i in xrange(len(commit_list) -1):
         # If first commit is because of a unhealthy merge,
-        # 48a200adb06c5a5be35292f9be842d0c14aabe69 63ba9cfcb5445730fa7d2303c0817dde02c69aee 741b29fe7a801e67945a53b65ec8db67a9e69d82
         # Line will have 3 commits.
-        splitter = pair.split()
-        print "Splitter: %s" % splitter
-        if len(splitter) == 3:
-            first, second = splitter[1:]
+        print i
+        
+        first = commit_list[i]
+        second = commit_list[i+1]
+        if (i == 0 or body2 == None):
+            body1 = subprocess.check_output(["git", "show", "--format=%b", first]).strip()
         else:
-            first, second = splitter
-        out = subprocess.check_output(["git", "diff", first, second])
-        if not out:
+            body1 = body2
+
+        if not body1:
+            continue
+        body2 = subprocess.check_output(["git", "show", "--format=%b", second]).strip()
+        if not body2:
+            continue
+        diff = subprocess.check_output(["git", "diff", first, second])
+
+        if not diff:
             print(MSG)
             print("First commit  :  %s" % first)
             print("Second commit :  %s" % second)
             sys.exit(1)
+    return
 
+if False:
+    newrev = subprocess.check_output([
+        "git", "log", "-1", "--format=%H"
+    ]).strip()
+    
+    commit_list = subprocess.check_output([
+        "git", "rev-list", "HEAD", "-n", "10"
+    ])
+    check_commit_pairs(commit_list)
+    sys.exit(0)
+
+for line in fileinput.input():
+    std_input = line.split(" ")
+    oldrev, newrev, refname  = std_input[0], std_input[1], std_input[2]
+    commit_list = subprocess.check_output([
+        "git", "rev-list", newrev, "-n", "10"
+    ])
+    check_commit_pairs(commit_list)
