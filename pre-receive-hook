@@ -38,4 +38,4 @@ if __name__ == "__main__":
         # prevent large files
         prevent_large_files(oldrev, newrev, refname)
         # prevent duplicate commits
-        #prevent_duplicate_commits(oldrev, newrev, refname)
+        prevent_duplicate_commits(oldrev, newrev, refname)
