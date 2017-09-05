@@ -16,14 +16,17 @@ https://bioconductor.org/developers/package-guidelines/
 def prevent_large_files(oldrev, newrev, refname):
     """Pre-receive hook to check for large files."""
 
-    # set oldrec properly if this is branch creation
+    # set oldrev properly if this is branch creation
     if oldrev == ZERO_COMMIT:
-        output = subprocess.check_output(["git", "rev-list",
-                                        "--max-parents=0",
-                                        newrev])
-        oldrev = output.strip()
-        print("oldrev: ",oldrev)
 
+        if refname == "refs/heads/master":
+            oldrev = subprocess.check_output([
+                "git", "rev-list","--max-parents=0", newrev
+            ]).strip()
+        else:
+            oldrev = "HEAD"
+
+    print("oldrev: ", oldrev)
 
     list_files = subprocess.check_output(["git", "diff",
                                        "--name-only", "--diff-filter=ACMRT",
