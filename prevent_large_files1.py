@@ -3,7 +3,7 @@ import sys
 # Global variables used by pre-recieve hook
 
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
-MAXSIZE = int(80000)  # 5MB limit on file size
+MAXSIZE = int(10000)  # 5MB limit on file size
 ERROR_MSG = """Error: file larger than %.0f Mb.
 
     File name: '%s'
@@ -37,6 +37,8 @@ def prevent_large_files(oldrev, newrev, refname):
         if size:
             # Compare filesize to MAXSIZE
             mb = 1024.0 * 1024.0
+            print(fl)
+            print(size)
             if size > MAXSIZE:
                 print(ERROR_MSG  % (MAXSIZE / mb, fl, size / mb) )
                 sys.exit(1)
