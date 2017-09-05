@@ -32,6 +32,9 @@ if __name__ == "__main__":
     for line in fileinput.input():
         std_input = line.split(" ")
         oldrev, newrev, refname = std_input[0], std_input[1], std_input[2]
+        print oldrev
+        print newrev
+        print refname
         # Check for zero commit, check branch deletions
         if newrev == ZERO_COMMIT:
             continue

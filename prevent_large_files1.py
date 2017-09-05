@@ -22,7 +22,7 @@ def prevent_large_files(oldrev, newrev, refname):
                                         "--max-parents=0",
                                         newrev])
         parent_commit = output.strip()
-        print parent_commit
+        print("parent_commit: ",parent_commit)
 
 
     list_files = subprocess.check_output(["git", "diff",
