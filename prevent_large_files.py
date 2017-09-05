@@ -1,7 +1,5 @@
 import subprocess
 import sys
-import fileinput
-import math
 # Global variables used by pre-recieve hook
 
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
@@ -18,9 +16,14 @@ https://bioconductor.org/developers/package-guidelines/
 def prevent_large_files(oldrev, newrev, refname):
     """Pre-receive hook to check for large files."""
 
-    # set oldrec properly if this is branch creation
+    # set oldrev properly if this is branch creation
     if oldrev == ZERO_COMMIT:
-        oldrev = "HEAD"
+        if refname == "refs/heads/master":
+            oldrev = subprocess.check_output([
+                "git", "rev-list","--max-parents=0", newrev
+            ]).strip()
+        else:
+            oldrev = "HEAD"
 
     list_files = subprocess.check_output(["git", "diff",
                                        "--name-only", "--diff-filter=ACMRT",
