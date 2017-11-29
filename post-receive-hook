@@ -1,40 +1,16 @@
-#!/bin/sh
-#
-# This script adds every pushed commit info to XML file
-# Make sure to place it in your bare repo's /hooks dir and make it executable
-#
+#!/usr/bin/env python
 
-git update-server-info
+import fileinput
+from rss_feed import rss_feed
 
-FILE="/home/git/feed.xml"
 
-# Get diapasone of pushed commits
-while read oldrev newrev refname
-do
-    echo $oldrev
-    echo $newrev
-    echo $refname
-    # Loop over pushed commits and concatenate XML data into $commits variable
-    commits=$(git log $oldrev..$newrev --pretty=format:'%h|%an|%s|%at' |
-    while IFS='|' read hash author message timestamp
-    do
-    
-    date=`date -d @$timestamp +%Y-%m-%dT%H:%M:%SZ`
-    echo "\<entry\>\n\
-      \<author\>\<name\>$author\<\/name\>\<\/author\>\n\
-      \<title\>$message\<\/title\>\n\
-      \<published\>$date\<\/published\>\n\
-      \<summary type=\"html\"\>\n\
-      \<![CDATA[\n\
-      ]]\>\n\
-      \<\/summary\>\n\
-    \<\/entry\>"
-
-  done)
-
-  echo $commits
-  echo $FILE
-
-  # Add $commits variable value after 3rd line in XML file
-  sed -i "3 a \\$(echo $commits)" $FILE
-done
+if __name__ == "__main__":
+    # Path to feed.xml
+    fpath="feed.xml"
+    # Run function for RSS feed
+    for line in fileinput.input():
+        std_input = line.split(" ")
+        oldrev, newrev, refname = [item.strip() for item in std_input]
+        
+        # RSS-feed post-receive hook
+        rss_feed(oldrev, newrev, refname, fpath)
