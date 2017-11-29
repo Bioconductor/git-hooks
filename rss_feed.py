@@ -34,23 +34,20 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
     try:
         latest_commit = subprocess.check_output([
             "git", "log", oldrev + ".." + newrev,
-            "--pretty=format:%h|%an|%s|%at"
+            "--pretty=format:%h|%an|%B|%at"
         ])
     except Exception as e:
         print("Exception: %s" % e)
         pass
     if latest_commit:
-        commit_id, author, message, timestamp = latest_commit.split("|")
+        commit_id, author, message, timestamp, notes = latest_commit.split("|")
         date = datetime.datetime.fromtimestamp(float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
-        entry = "<entry>\n\
-        <commit_id>%s</commit_id>\n\
-        <author><name>%s</name></author>\n\
-        <title>%s</title>\n\
-        <published>%s</published>\n\
-        <summary type=\"html\">\n\
-        <![CDATA[\n\
-        ]]>\n\
-        </summary>\n\
+        entry = "\
+        <entry>\n\
+            <commit_id>%s</commit_id>\n\
+            <author><name>%s</name></author>\n\
+            <title>%s</title>\n\
+            <published>%s</published>\n\
         </entry>\n" % (commit_id, author, message, date)
     ## Write FEED and sleep to avoid race condition
     try:
