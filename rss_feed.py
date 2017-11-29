@@ -40,7 +40,7 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         print("Exception: %s" % e)
         pass
     if latest_commit:
-        commit_id, author, message, timestamp, notes = latest_commit.split("|")
+        commit_id, author, message, timestamp = latest_commit.split("|")
         date = datetime.datetime.fromtimestamp(float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
         entry = "\
         <entry>\n\
