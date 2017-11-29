@@ -33,7 +33,8 @@ do
   done)
 
   echo $commits
+  echo $FILE
 
   # Add $commits variable value after 3rd line in XML file
-  sed -i "3 a $(echo $commits)" $FILE
+  sed -i "3 a \\$(echo $commits)" $FILE
 done
