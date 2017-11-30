@@ -56,19 +56,13 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         pass
     if latest_commit:
         print("Latest: ", latest_commit)
+
         commit_id, author, title, timestamp = latest_commit.split("|")
         date = datetime.datetime.fromtimestamp(float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
-#        entry = "<entry>\n\
-#        <commit_id>%s</commit_id>\n\
-#        <author><name>%s</name></author>\n\
-#        <title>%s</title>\n\
-#        <published>%s</published>\n\
-#        </entry>\n" % (commit_id, author, title, date)
-
+        # Entry to the RSS feed
         entry = ENTRY % (commit_id, author, title, date)
-        print(entry)
-    ## Write FEED and sleep to avoid race condition
     try:
+        ## Write FEED and sleep to avoid race condition
         write_feed(entry, fpath)
     except IOError as e:
         ## Avoid race condition during file write
