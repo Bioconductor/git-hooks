@@ -15,7 +15,9 @@ def limit_feed_length(fpath, length):
     if len(dom.getElementsByTagName('entry')) > length:
         # If more than length get all elements at the end
         last = dom.getElementsByTagName('entry')[length:]
-        dom.documentElement.removeChild(last)
+        print(last)
+        for item in last:
+            dom.documentElement.removeChild(item)
         dom.writexml(open(fpath,"w"))
     return
 
