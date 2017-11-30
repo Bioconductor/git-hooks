@@ -40,15 +40,15 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         print("Exception: %s" % e)
         pass
     if latest_commit:
+        print("Latest: ", latest_commit)
         commit_id, author, title, timestamp = latest_commit.split("|")
         date = datetime.datetime.fromtimestamp(float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
-        entry = "\
-<entry>\n\
-    <commit_id>%s</commit_id>\n\
-    <author><name>%s</name></author>\n\
-    <title>%s</title>\n\
-    <published>%s</published>\n\
-</entry>\n" % (commit_id, author, title, date)
+        entry = "<entry>\n\
+        <commit_id>%s</commit_id>\n\
+        <author><name>%s</name></author>\n\
+        <title>%s</title>\n\
+        <published>%s</published>\n\
+        </entry>\n" % (commit_id, author, title, date)
     ## Write FEED and sleep to avoid race condition
     try:
         write_feed(entry, fpath)
