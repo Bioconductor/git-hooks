@@ -7,7 +7,8 @@ from rss_feed import rss_feed
 if __name__ == "__main__":
     # Path to feed.xml
     fpath = "/home/git/feed.xml"
-    length = 200
+    # FIXME: Change length to 200 once testing is over
+    length = 5
     # Run function for RSS feed
     for line in fileinput.input():
         std_input = line.split(" ")
