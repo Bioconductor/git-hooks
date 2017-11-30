@@ -10,6 +10,8 @@ def limit_feed_length(fpath, length):
     with open(fpath, "r") as f:
         data = f.read()
     dom = parseString(data)
+    print("length: ",length)
+    print("no of entries: ",len(dom.getElementsByTagName('entry')))
     if len(dom.getElementsByTagName('entry')) > length:
         # If more than length get all elements at the end
         last = dom.getElementsByTagName('entry')[length:]
