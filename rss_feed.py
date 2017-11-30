@@ -4,6 +4,17 @@ import time
 import re
 from xml.dom.minidom import parseString
 
+ENTRY="""
+<entry>
+    <commit_id>%s</commit_id>
+    <author>
+        <name>%s</name>
+    </author>
+    <title>%s</title>
+    <published>%s</published>
+</entry>
+"""
+
 
 def limit_feed_length(fpath, length):
     """ This is run only once every day"""
@@ -47,12 +58,15 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         print("Latest: ", latest_commit)
         commit_id, author, title, timestamp = latest_commit.split("|")
         date = datetime.datetime.fromtimestamp(float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
-        entry = "<entry>\n\
-        <commit_id>%s</commit_id>\n\
-        <author><name>%s</name></author>\n\
-        <title>%s</title>\n\
-        <published>%s</published>\n\
-        </entry>\n" % (commit_id, author, title, date)
+#        entry = "<entry>\n\
+#        <commit_id>%s</commit_id>\n\
+#        <author><name>%s</name></author>\n\
+#        <title>%s</title>\n\
+#        <published>%s</published>\n\
+#        </entry>\n" % (commit_id, author, title, date)
+
+        entry = ENTRY % (commit_id, author, title, date)
+        print(entry)
     ## Write FEED and sleep to avoid race condition
     try:
         write_feed(entry, fpath)
