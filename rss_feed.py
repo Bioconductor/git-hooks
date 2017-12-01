@@ -9,6 +9,7 @@ ENTRY="""<item>
     <title>%s</title>
     <link>www.bioconductor.org</link>
     <description>%s</description>
+    <comments>%s</comments>
     <author>%s</author>
     <pubDate>%s</pubDate>
 </item>
@@ -74,11 +75,13 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
 
             ## Entry to the RSS feed
             ## title = commit_id,
-            ## description = commit_title + commit_message,
+            ## description = commit_title,
+            ## comments = commit_message,
             ## author = author
             ## pubDate = pubDate
             entry = ENTRY % (commit_id,
-                             commit_title + "\n" + commit_message,
+                             commit_title,
+                             commit_message,
                              author,
                              pubDate)
 
