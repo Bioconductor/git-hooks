@@ -17,23 +17,19 @@ ENTRY="""<item>
 def limit_feed_length(fpath, length):
     """ This is run only once every day"""
 
-    with open(fpath, "r") as f:
+    with open(fpath, "r+") as f:
         fcntl.lockf(f, fcntl.LOCK_EX)
         data = f.read()
-        fcntl.lockf(f, fcntl.LOCK_UN)
-    dom = parseString(data)
-    if len(dom.getElementsByTagName('item')) > length:
-        # If more than length get all elements at the end
-        last = dom.getElementsByTagName('item')[length:]
-        for item in last:
-            dom.documentElement.removeChild(item)
+        dom = parseString(data)
+        if len(dom.getElementsByTagName('item')) > length:
+            # If more than length get all elements at the end
+            last = dom.getElementsByTagName('item')[length:]
+            for item in last:
+                dom.documentElement.removeChild(item)
 
-        ## Mutex on file
-        xf = open(fpath, "r+")
-        fcntl.lockf(xf, fcntl.LOCK_EX)
-        dom.writexml(xf)
-        fcntl.lockf(xf, fcntl.LOCK_UN)
-        xf.close()
+            ## Mutex on file
+            dom.writexml(f)
+        fcntl.lockf(f, fcntl.LOCK_UN)
     return
 
 
@@ -66,7 +62,7 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         print(latest_commit)
         latest_commit = latest_commit.split("\n")
         print("latest_commit: ", latest_commit)
-        for commit in latest_commit:
+        for commit in latest_commit.reverse():
             print("commit: ", commit)
             commit_id, author, commit_title, timestamp = commit.split("|")
             pubDate = datetime.datetime.fromtimestamp(
