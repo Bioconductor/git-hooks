@@ -63,7 +63,7 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         pass
     if latest_commit:
         ## If more than one commit to unpack
-        latest_commit = latest_commit.split()
+        latest_commit = latest_commit.split("\n")
         print("latest_commit: ", latest_commit)
         for commit in latest_commit:
             print("commit: ", commit)
