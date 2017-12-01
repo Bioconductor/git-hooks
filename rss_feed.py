@@ -29,7 +29,7 @@ def limit_feed_length(fpath, length):
             dom.documentElement.removeChild(item)
 
         ## Mutex on file
-        xf = open(fpath, "w")
+        xf = open(fpath, "r+")
         fcntl.lockf(xf, fcntl.LOCK_EX)
         dom.writexml(xf)
         fcntl.lockf(xf, fcntl.LOCK_UN)
