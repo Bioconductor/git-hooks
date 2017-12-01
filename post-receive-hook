@@ -11,7 +11,7 @@ if __name__ == "__main__":
     length = 5
     # Run function for RSS feed
     for line in fileinput.input():
-        print("line", line)
+        #print("line", line)
         std_input = line.split(" ")
         oldrev, newrev, refname = [item.strip() for item in std_input]
         
