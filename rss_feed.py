@@ -67,7 +67,7 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
 
         for commit in latest_commit:
 
-            commit_id, author, commit_message, timestamp = latest_commit.split("|")
+            commit_id, author, commit_message, timestamp = commit.split("|")
             pubDate = datetime.datetime.fromtimestamp(
                     float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
 
