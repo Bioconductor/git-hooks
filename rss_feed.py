@@ -9,7 +9,6 @@ ENTRY="""<item>
     <title>%s</title>
     <link>www.bioconductor.org</link>
     <description>%s</description>
-    <comments>%s</comments>
     <author>%s</author>
     <pubDate>%s</pubDate>
 </item>
