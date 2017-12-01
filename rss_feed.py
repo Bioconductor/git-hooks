@@ -64,9 +64,9 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
     if latest_commit:
         ## If more than one commit to unpack
         latest_commit = latest_commit.split()
-
+        print("latest_commit: ", latest_commit)
         for commit in latest_commit:
-
+            print("commit: ", commit)
             commit_id, author, commit_message, timestamp = commit.split("|")
             pubDate = datetime.datetime.fromtimestamp(
                     float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
