@@ -32,7 +32,7 @@ def limit_feed_length(fpath, length):
             channel_root.remove(item)
     with open(fpath, "w") as f:
         fcntl.lockf(f, fcntl.LOCK_EX)
-        doc.write(f, encoding='UTF-8', xml_declaration=True)
+        doc.write(f, encoding="UTF-8", xml_declaration=True)
         fcntl.lockf(f, fcntl.LOCK_UN)
     return
 
