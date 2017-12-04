@@ -2,8 +2,9 @@ import subprocess
 import datetime
 import time
 import re
-from xml.dom.minidom import parseString
 import fcntl
+from xml.etree.ElementTree import parse
+
 
 ENTRY="""<item>
     <title>%s</title>
@@ -16,19 +17,22 @@ ENTRY="""<item>
 
 def limit_feed_length(fpath, length):
     """ This is run only once every day"""
-
     with open(fpath, "r+") as f:
         fcntl.lockf(f, fcntl.LOCK_EX)
-        data = f.read()
-        dom = parseString(data)
-        if len(dom.getElementsByTagName('item')) > length:
-            # If more than length get all elements at the end
-            last = dom.getElementsByTagName('item')[length:]
-            for item in last:
-                dom.documentElement.removeChild(item)
-
-            ## Mutex on file
-            dom.writexml(f)
+        doc = parse(f)
+        fcntl.lockf(f, fcntl.LOCK_UN)
+    root = doc.getroot()
+    ## Get all RSS item
+    channel_root = root.find("channel")
+    items = channel_root.findall("item")
+    ## check length
+    if len(items) > length:
+        extra_items = items[length:]
+        for item in extra_items:
+            channel_root.remove(item)
+    with open(fpath, "w") as f:
+        fcntl.lockf(f, fcntl.LOCK_EX)
+        doc.write(f, encoding='UTF-8', xml_declaration=True)
         fcntl.lockf(f, fcntl.LOCK_UN)
     return
 
