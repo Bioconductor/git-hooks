@@ -6,13 +6,12 @@ from rss_feed import rss_feed
 
 if __name__ == "__main__":
     # Path to feed.xml
-    fpath = "/home/git/feed.xml"
-    fpath_release = "/home/git/feed.release.xml"
+    fpath = "/home/git/rss/gitlog.xml"
+    fpath_release = "/home/git/rss/gitlog.release.xml"
     # FIXME: Change length to 200 once testing is over
     length = 5
     # Run function for RSS feed
     for line in fileinput.input():
-        #print("line", line)
         std_input = line.split(" ")
         oldrev, newrev, refname = [item.strip() for item in std_input]
 
