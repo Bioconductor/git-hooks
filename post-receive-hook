@@ -19,5 +19,6 @@ if __name__ == "__main__":
             # RSS-feed post-receive hook
             print("RELEASE refname: ", refname)
             rss_feed(oldrev, newrev, refname, fpath_release, length)
-        print("master refname", refname)
-        rss_feed(oldrev, newrev, refname, fpath, length)
+        else:
+            print("master refname", refname)
+            rss_feed(oldrev, newrev, refname, fpath, length)
