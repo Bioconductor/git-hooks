@@ -54,8 +54,6 @@ def write_feed(entry, fpath):
 
 def rss_feed(oldrev, newrev, refname, fpath, length):
     """Post receive hook to check start Git RSS feed"""
-    print("refname: ", refname)
-    print("fpath: ", fpath)
     try:
         latest_commit = subprocess.check_output([
             "git", "log", oldrev + ".." + newrev,
@@ -67,7 +65,6 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
     if latest_commit:
         ## If more than one commit to unpack
         latest_commit = latest_commit.split("\n")
-        print("latest_commit: ", latest_commit)
         ## Reverse if there are multiple commits
         for commit in latest_commit[::-1]:
             print("commit: ", commit)
@@ -83,7 +80,6 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
                              commit_title,
                              author,
                              pubDate)
-            print("entry", entry)
             ## Write FEED and sleep to avoid race condition
             try:
                 write_feed(entry, fpath)
@@ -97,7 +93,6 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
                     print("Error writing feed", e)
             ## Limit feed length to 200
             try:
-                print("limit_feed_length")
                 limit_feed_length(fpath, length)
             except Exception as e:
                 print("Error limiting feed size", e)
