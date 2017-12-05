@@ -6,21 +6,22 @@ import fcntl
 from xml.etree.ElementTree import parse
 
 
-ENTRY="""<item>
-    <title>%s</title>
-    <link>www.bioconductor.org</link>
-    <description>%s</description>
-    <author>%s</author>
-    <pubDate>%s</pubDate>
-</item>
+ENTRY="""    <item>
+      <title>%s</title>
+      <link>www.bioconductor.org</link>
+      <description>%s</description>
+      <author>%s</author>
+      <pubDate>%s</pubDate>
+    </item>
 """
 
 def limit_feed_length(fpath, length):
     """ This is run only once every day"""
-    with open(fpath, "r+") as f:
-        fcntl.lockf(f, fcntl.LOCK_EX)
-        doc = parse(f)
-        fcntl.lockf(f, fcntl.LOCK_UN)
+#    with open(fpath, "r+") as f:
+#        print("LOCK")
+#        fcntl.lockf(f, fcntl.LOCK_EX)
+    doc = parse(fpath)
+#        fcntl.lockf(f, fcntl.LOCK_UN)
     root = doc.getroot()
     ## Get all RSS item
     channel_root = root.find("channel")
@@ -65,9 +66,9 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         pass
     if latest_commit:
         ## If more than one commit to unpack
-        print(latest_commit)
         latest_commit = latest_commit.split("\n")
         print("latest_commit: ", latest_commit)
+        ## Reverse if there are multiple commits
         for commit in latest_commit[::-1]:
             print("commit: ", commit)
             commit_id, author, commit_title, timestamp = commit.split("|")
@@ -85,9 +86,7 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
             print("entry", entry)
             ## Write FEED and sleep to avoid race condition
             try:
-                print("writing feed")
                 write_feed(entry, fpath)
-                print("Written feed")
             except IOError as e:
                 ## Avoid race condition during file write
                 time.sleep(1)
@@ -98,9 +97,8 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
                     print("Error writing feed", e)
             ## Limit feed length to 200
             try:
-                print("limiting feed")
-                limit_feed_length(fpath, length)
-                print("done limiting feed")
+                print("limit_feed_length")
+                #limit_feed_length(fpath, length)
             except Exception as e:
                 print("Error limiting feed size", e)
     return
