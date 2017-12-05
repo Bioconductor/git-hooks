@@ -43,8 +43,8 @@ def write_feed(entry, fpath):
     with open(fpath, "r+") as f:
         fcntl.lockf(f, fcntl.LOCK_EX)
         text = f.read()
-        text = re.sub("<copyright/>\n",
-                      "<copyright/>\n" + entry,
+        text = re.sub("<copyright*/>\n",
+                      "<copyright*/>\n" + entry,
                       text)
         f.seek(0)
         f.write(text)
