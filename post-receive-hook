@@ -15,6 +15,10 @@ if __name__ == "__main__":
         #print("line", line)
         std_input = line.split(" ")
         oldrev, newrev, refname = [item.strip() for item in std_input]
-        print("refname: ", refname)
-        # RSS-feed post-receive hook
+
+        if ("RELEASE" in refname):
+            # RSS-feed post-receive hook
+            print("RELEASE refname: ", refname)
+            rss_feed(oldrev, newrev, refname, fpath_release, length)
+        print("master refname", refname)
         rss_feed(oldrev, newrev, refname, fpath, length)

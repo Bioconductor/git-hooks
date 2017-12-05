@@ -53,6 +53,7 @@ def write_feed(entry, fpath):
 
 def rss_feed(oldrev, newrev, refname, fpath, length):
     """Post receive hook to check start Git RSS feed"""
+    print("refname: ", refname)
     try:
         latest_commit = subprocess.check_output([
             "git", "log", oldrev + ".." + newrev,
