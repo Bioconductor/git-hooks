@@ -70,7 +70,7 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         for commit in latest_commit[::-1]:
             print("commit: ", commit)
             commit_id, author, commit_title, timestamp = commit.split("|")
-            pubDate = datetime.datetime.fromtimestamp(
+            pubDate = datetime.datetime.fromtimestamp(o
                     float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
 
             ## Entry to the RSS feed
@@ -82,13 +82,15 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
                              commit_title,
                              author,
                              pubDate)
-
+            print("entry", entry)
             ## Write FEED and sleep to avoid race condition
             try:
+                print("writing feed")
                 write_feed(entry, fpath)
+                print("Written feed")
             except IOError as e:
                 ## Avoid race condition during file write
-                time.sleep(2)
+                time.sleep(1)
                 try:
                     ## Try writing to feed again after 2 secs
                     write_feed(entry, fpath)
@@ -97,7 +99,9 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
 
             ## Limit feed length to 200
             try:
+                print("limiting feed")
                 limit_feed_length(fpath, length)
+                print("done limiting feed")
             except Exception as e:
                 print("Error limiting feed size", e)
     return
