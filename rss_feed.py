@@ -98,7 +98,7 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
             ## Limit feed length to 200
             try:
                 print("limit_feed_length")
-                #limit_feed_length(fpath, length)
+                limit_feed_length(fpath, length)
             except Exception as e:
                 print("Error limiting feed size", e)
     return
