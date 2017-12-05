@@ -54,6 +54,7 @@ def write_feed(entry, fpath):
 def rss_feed(oldrev, newrev, refname, fpath, length):
     """Post receive hook to check start Git RSS feed"""
     print("refname: ", refname)
+    print("fpath: ", fpath)
     try:
         latest_commit = subprocess.check_output([
             "git", "log", oldrev + ".." + newrev,
@@ -96,10 +97,10 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
                 except IOError as e:
                     print("Error writing feed", e)
             ## Limit feed length to 200
-            # try:
-                # print("limiting feed")
-                # limit_feed_length(fpath, length)
-                # print("done limiting feed")
-            # except Exception as e:
-                # print("Error limiting feed size", e)
+            try:
+                print("limiting feed")
+                limit_feed_length(fpath, length)
+                print("done limiting feed")
+            except Exception as e:
+                print("Error limiting feed size", e)
     return
