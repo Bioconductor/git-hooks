@@ -4,6 +4,9 @@ import fileinput
 from rss_feed import rss_feed
 
 
+ZERO_COMMIT = "0000000000000000000000000000000000000000"
+
+
 if __name__ == "__main__":
     # Path to feed.xml
     fpath = "/home/git/rss/gitlog.xml"
@@ -14,11 +17,13 @@ if __name__ == "__main__":
     for line in fileinput.input():
         std_input = line.split(" ")
         oldrev, newrev, refname = [item.strip() for item in std_input]
-
+        # Check for zero commit, check branch deletions
+        # also, avoid new package additions
+        if (oldrev == ZERO_COMMIT or newrev == ZERO_COMMIT):
+            continue
+        # Split feed into correct files
         if ("RELEASE" in refname):
             # RSS-feed post-receive hook
-            print("RELEASE refname: ", refname)
             rss_feed(oldrev, newrev, refname, fpath_release, length)
         else:
-            print("master refname", refname)
             rss_feed(oldrev, newrev, refname, fpath, length)
