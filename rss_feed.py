@@ -66,7 +66,7 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         latest_commit = latest_commit.split("\n")
         ## Reverse if there are multiple commits
         for commit in latest_commit[::-1]:
-            print("commit: ", commit)
+            # print("commit: ", commit)
             commit_id, author, commit_title, timestamp = commit.split("|")
             pubDate = datetime.datetime.fromtimestamp(float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
 
