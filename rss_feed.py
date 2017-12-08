@@ -28,6 +28,7 @@ def limit_feed_length(fpath, length):
             extra_items = items[length:]
             for item in extra_items:
                 channel_root.remove(item)
+        f.seek(0)
         doc.write(f)
         fcntl.lockf(f, fcntl.LOCK_UN)
     return
@@ -77,7 +78,7 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
             ## author = author
             ## pubDate = pubDate
             entry = ENTRY % (commit_id,
-                             package_name + "\n"+ commit_msg,
+                             package_name + ": "+ commit_msg,
                              author,
                              pubDate)
             ## Write FEED and sleep to avoid race condition
