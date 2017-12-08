@@ -1,13 +1,12 @@
 import subprocess
 import datetime
-import time
 import re
 import fcntl
 from xml.etree.ElementTree import parse
 
 ENTRY="""    <item>
       <title>%s</title>
-      <link>www.bioconductor.org</link>
+      <link>https://www.bioconductor.org</link>
       <description>%s</description>
       <author>%s</author>
       <pubDate>%s</pubDate>
@@ -15,23 +14,19 @@ ENTRY="""    <item>
 """
 
 def limit_feed_length(fpath, length):
-    """ This is run only once every day"""
-#    with open(fpath, "r+") as f:
-#        print("LOCK")
-#        fcntl.lockf(f, fcntl.LOCK_EX)
-    doc = parse(fpath)
-#        fcntl.lockf(f, fcntl.LOCK_UN)
-    root = doc.getroot()
-    ## Get all RSS item
-    channel_root = root.find("channel")
-    items = channel_root.findall("item")
-    ## check length
-    if len(items) > length:
-        extra_items = items[length:]
-        for item in extra_items:
-            channel_root.remove(item)
-    with open(fpath, "w") as f:
+    """ This is run everytime the feed reaches limit"""
+    with open(fpath, "r+") as f:
         fcntl.lockf(f, fcntl.LOCK_EX)
+        doc = parse(f)
+        root = doc.getroot()
+        ## Get all RSS item
+        channel_root = root.find("channel")
+        items = channel_root.findall("item")
+        ## check length
+        if len(items) > length:
+            extra_items = items[length:]
+            for item in extra_items:
+                channel_root.remove(item)
         doc.write(f, encoding="UTF-8", xml_declaration=True)
         fcntl.lockf(f, fcntl.LOCK_UN)
     return
@@ -42,8 +37,11 @@ def write_feed(entry, fpath):
     with open(fpath, "r+") as f:
         fcntl.lockf(f, fcntl.LOCK_EX)
         text = f.read()
-        text = re.sub(r'<copyright.*?/>\n',
-                      '<copyright/>\n' + entry,
+#        text = re.sub(r'<copyright.*?/>\n',
+#                      '<copyright/>\n' + entry,
+#                      text)
+        text = re.sub(r'<copyright />\n',
+                      '<copyright />\n' + entry,
                       text)
         f.seek(0)
         f.write(text)
@@ -83,13 +81,7 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
             try:
                 write_feed(entry, fpath)
             except IOError as e:
-                ## Avoid race condition during file write
-                time.sleep(1)
-                try:
-                    ## Try writing to feed again after 2 secs
-                    write_feed(entry, fpath)
-                except IOError as e:
-                    print("Error writing feed", e)
+                print("Error writing feed", e)
             ## Limit feed length to 200
             try:
                 limit_feed_length(fpath, length)
