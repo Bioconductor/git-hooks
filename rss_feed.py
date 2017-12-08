@@ -57,10 +57,8 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         # Get package name
         package_path = subprocess.check_output([
             "git", "rev-parse", "--show-toplevel"]).strip()
-        package_name = basename(package_path)
-        print("package path", package_path)
+        package_name = basename(abspath(package_path)).replace(".git","")
         print("package name", package_name)
-        print("abs path", abspath(package_path))
     except Exception as e:
         print("Exception: %s" % e)
         pass
