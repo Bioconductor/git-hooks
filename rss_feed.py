@@ -29,6 +29,7 @@ def limit_feed_length(fpath, length):
             for item in extra_items:
                 channel_root.remove(item)
         f.seek(0)
+        f.truncate()
         doc.write(f)
         fcntl.lockf(f, fcntl.LOCK_UN)
     return
