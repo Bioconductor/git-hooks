@@ -1,6 +1,7 @@
 import subprocess
 import datetime
 import re
+from os.path import basename
 import fcntl
 from xml.etree.ElementTree import parse
 
@@ -27,7 +28,7 @@ def limit_feed_length(fpath, length):
             extra_items = items[length:]
             for item in extra_items:
                 channel_root.remove(item)
-        doc.write(f, encoding="UTF-8", xml_declaration=True)
+        doc.write(f)
         fcntl.lockf(f, fcntl.LOCK_UN)
     return
 
@@ -37,9 +38,6 @@ def write_feed(entry, fpath):
     with open(fpath, "r+") as f:
         fcntl.lockf(f, fcntl.LOCK_EX)
         text = f.read()
-#        text = re.sub(r'<copyright.*?/>\n',
-#                      '<copyright/>\n' + entry,
-#                      text)
         text = re.sub(r'<copyright />\n',
                       '<copyright />\n' + entry,
                       text)
@@ -56,6 +54,10 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
             "git", "log", oldrev + ".." + newrev,
             "--pretty=format:%H|%an|%s|%at"
         ])
+        # Get package name
+        package_path = subprocess.check_output([
+            "git", "rev-parse", "--show-toplevel"]).strip()
+        package_name = basename(package_path)
     except Exception as e:
         print("Exception: %s" % e)
         pass
@@ -65,16 +67,16 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         ## Reverse if there are multiple commits
         for commit in latest_commit[::-1]:
             # print("commit: ", commit)
-            commit_id, author, commit_title, timestamp = commit.split("|")
+            commit_id, author, commit_msg, timestamp = commit.split("|")
             pubDate = datetime.datetime.fromtimestamp(float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
 
             ## Entry to the RSS feed
             ## title = commit_id,
-            ## description = commit_title,
+            ## description = commit_msg,
             ## author = author
             ## pubDate = pubDate
             entry = ENTRY % (commit_id,
-                             commit_title,
+                             package_name + "\n"+ commit_msg,
                              author,
                              pubDate)
             ## Write FEED and sleep to avoid race condition
