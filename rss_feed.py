@@ -31,6 +31,7 @@ def limit_feed_length(fpath, length):
         f.seek(0)
         f.truncate()
         doc.write(f)
+        f.write("\n")
         fcntl.lockf(f, fcntl.LOCK_UN)
     return
 
