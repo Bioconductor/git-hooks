@@ -12,7 +12,7 @@ if __name__ == "__main__":
     fpath = "/home/git/rss/gitlog.xml"
     fpath_release = "/home/git/rss/gitlog.release.xml"
     # FIXME: Change length to 200 once testing is over
-    length = 5
+    length = 20
     # Run function for RSS feed
     for line in fileinput.input():
         std_input = line.split(" ")

@@ -57,7 +57,7 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
     try:
         latest_commit = subprocess.check_output([
             "git", "log", oldrev + ".." + newrev,
-            "--pretty=format:%h|%an|%s|%at"
+            "--pretty=format:%H|%an|%s|%at"
         ])
     except Exception as e:
         print("Exception: %s" % e)
