@@ -1,7 +1,7 @@
 import subprocess
 import datetime
 import re
-from os.path import basename
+from os.path import basename, abspath
 import fcntl
 from xml.etree.ElementTree import parse
 
@@ -58,6 +58,9 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         package_path = subprocess.check_output([
             "git", "rev-parse", "--show-toplevel"]).strip()
         package_name = basename(package_path)
+        print("package path", package_path)
+        print("package name", package_name)
+        print("abs path", abspath(package_path))
     except Exception as e:
         print("Exception: %s" % e)
         pass
