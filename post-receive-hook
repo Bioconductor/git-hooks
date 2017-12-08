@@ -11,7 +11,7 @@ if __name__ == "__main__":
     # Path to feed.xml
     fpath = "/home/git/rss/gitlog.xml"
     fpath_release = "/home/git/rss/gitlog.release.xml"
-    length = 3
+    length = 200
     # Run function for RSS feed
     for line in fileinput.input():
         std_input = line.split(" ")
