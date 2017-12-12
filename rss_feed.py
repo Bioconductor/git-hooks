@@ -72,7 +72,7 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         package_path = subprocess.check_output([
             "git", "rev-parse", "--show-toplevel"]).strip()
         package_name = basename(abspath(package_path)).replace(".git", "")
-        print("Package name: ", package_name)
+#        print("Package name: ", package_name)
     except Exception as e:
         print("Exception: %s" % e)
         pass
@@ -103,8 +103,8 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
             except IOError as e:
                 print("Error writing feed", e)
             # Limit feed length to 200
-            try:
-                limit_feed_length(fpath, length)
-            except Exception as e:
-                print("Error limiting feed size", e)
+#            try:
+#                limit_feed_length(fpath, length)
+#            except Exception as e:
+#                print("Error limiting feed size", e)
     return
