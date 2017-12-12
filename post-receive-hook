@@ -2,17 +2,21 @@
 
 import fileinput
 from rss_feed import rss_feed
+import subprocess
 
 
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
-
+BASE_PATH = "/home/git/rss/bioconductor.org/assets/developers/rss-feeds/"
 
 if __name__ == "__main__":
     # Path to feed.xml
-    fpath = "/home/git/rss/gitlog.xml"
-    fpath_release = "/home/git/rss/gitlog.release.xml"
+    fpath = BASE_PATH + "gitlog.xml"
+    fpath_release = BASE_PATH + "gitlog.release.xml"
     length = 200
     # Run function for RSS feed
+#    f = open('/tmp/locktest', 'r')
+    # FIXME obtain a lock
+    # git -C "" pull
     for line in fileinput.input():
         std_input = line.split(" ")
         oldrev, newrev, refname = [item.strip() for item in std_input]
@@ -26,3 +30,9 @@ if __name__ == "__main__":
             rss_feed(oldrev, newrev, refname, fpath_release, length)
         else:
             rss_feed(oldrev, newrev, refname, fpath, length)
+
+    # commit to gitolite
+    ## git -C "/home/git/rss/bioconductor.org/" add
+    ## git -C "" commit
+    ## git -C ""  push
+    ### FIXME release the lock

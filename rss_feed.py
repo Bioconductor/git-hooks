@@ -11,19 +11,28 @@ ENTRY="""    <item>
       <description>%s</description>
       <author>%s</author>
       <pubDate>%s</pubDate>
+      <guid>%s</guid>
     </item>
 """
 
+# title = package_name,
+# description = commit_msg,
+# author = author
+# pubDate = pubDate
+# guid = commit_id
+
+# FIXME add log file, no print statments
+# FIXME Remove locks
 def limit_feed_length(fpath, length):
     """ This is run everytime the feed reaches limit"""
     with open(fpath, "r+") as f:
         fcntl.lockf(f, fcntl.LOCK_EX)
         doc = parse(f)
         root = doc.getroot()
-        ## Get all RSS item
+        # Get all RSS item
         channel_root = root.find("channel")
         items = channel_root.findall("item")
-        ## check length
+        # check length
         if len(items) > length:
             extra_items = items[length:]
             for item in extra_items:
@@ -36,6 +45,7 @@ def limit_feed_length(fpath, length):
     return
 
 
+# FIXME Remove locks
 def write_feed(entry, fpath):
     """Write feed to the beginning of the file"""
     with open(fpath, "r+") as f:
@@ -50,6 +60,7 @@ def write_feed(entry, fpath):
         fcntl.lockf(f, fcntl.LOCK_UN)
     return
 
+
 def rss_feed(oldrev, newrev, refname, fpath, length):
     """Post receive hook to check start Git RSS feed"""
     try:
@@ -60,34 +71,38 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         # Get package name
         package_path = subprocess.check_output([
             "git", "rev-parse", "--show-toplevel"]).strip()
-        package_name = basename(abspath(package_path)).replace(".git","")
+        package_name = basename(abspath(package_path)).replace(".git", "")
+        print("Package name: ", package_name)
     except Exception as e:
         print("Exception: %s" % e)
         pass
     if latest_commit:
-        ## If more than one commit to unpack
+        # If more than one commit to unpack
         latest_commit = latest_commit.split("\n")
-        ## Reverse if there are multiple commits
+        # Reverse if there are multiple commits
         for commit in latest_commit[::-1]:
             # print("commit: ", commit)
             commit_id, author, commit_msg, timestamp = commit.split("|")
-            pubDate = datetime.datetime.fromtimestamp(float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
+            pubDate = datetime.datetime.fromtimestamp(
+                        float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
 
-            ## Entry to the RSS feed
-            ## title = commit_id,
-            ## description = commit_msg,
-            ## author = author
-            ## pubDate = pubDate
-            entry = ENTRY % (commit_id,
-                             package_name + ": "+ commit_msg,
+            # Entry to the RSS feed
+            # title = package_name,
+            # description = commit_msg,
+            # author = author
+            # pubDate = pubDate
+            # guid = commit_id
+            entry = ENTRY % (package_name,
+                             commit_msg,
                              author,
-                             pubDate)
-            ## Write FEED and sleep to avoid race condition
+                             pubDate,
+                             commit_id)
+            # Write FEED and sleep to avoid race condition
             try:
                 write_feed(entry, fpath)
             except IOError as e:
                 print("Error writing feed", e)
-            ## Limit feed length to 200
+            # Limit feed length to 200
             try:
                 limit_feed_length(fpath, length)
             except Exception as e:
