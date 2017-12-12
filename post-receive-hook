@@ -50,8 +50,8 @@ if __name__ == "__main__":
     fpath_release = BASE_PATH + "gitlog.release.xml"
     length = 200
     # Run function for RSS feed
-    fh = open('fpath', 'r+')
-    fh2 = open('fpath_release', 'r+')
+    fh = open(fpath, 'r+')
+    fh2 = open(fpath_release, 'r+')
 
     # Obtain a lock
     fcntl.lockf(fh, fcntl.LOCK_EX)
