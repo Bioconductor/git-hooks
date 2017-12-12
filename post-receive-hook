@@ -8,6 +8,37 @@ import subprocess
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
 BASE_PATH = "/home/git/rss/bioconductor.org/assets/developers/rss-feeds/"
 
+
+def git_pull(cwd):
+    """Git svn fetch branch."""
+    cmd = ['git', '-C', cwd ,'pull']
+    subprocess.check_call(cmd)
+    return
+
+
+def git_add(path, cwd, force=False):
+    """Add files to git."""
+    cmd = ['git', '-C', cwd, 'add', path]
+    if force:
+        cmd = ['git', '-C', cwd ,'add', '-f', path]
+    subprocess.check_call(cmd)
+    return
+
+
+def git_commit(message, cwd):
+    """Commit files to git server."""
+    cmd = ['git', '-C', cwd, 'commit', '-m', message]
+    subprocess.check_call(cmd)
+    return
+
+
+def git_push(cwd, remote="origin", branch="master"):
+    """Git svn fetch branch."""
+    cmd = ['git', '-C', cwd,  'push', remote, branch]
+    subprocess.check_call(cmd)
+    return
+
+
 if __name__ == "__main__":
     # Path to feed.xml
     fpath = BASE_PATH + "gitlog.xml"
