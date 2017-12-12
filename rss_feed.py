@@ -4,6 +4,9 @@ import re
 from os.path import basename, abspath
 import fcntl
 from xml.etree.ElementTree import parse
+import logging
+logging.basicConfig(filename='post-recieve.log',level=logging.DEBUG)
+
 
 ENTRY="""    <item>
       <title>%s</title>
@@ -15,13 +18,7 @@ ENTRY="""    <item>
     </item>
 """
 
-# title = package_name,
-# description = commit_msg,
-# author = author
-# pubDate = pubDate
-# guid = commit_id
 
-# FIXME add log file, no print statments
 # FIXME Remove locks
 def limit_feed_length(fpath, length):
     """ This is run everytime the feed reaches limit"""
@@ -72,16 +69,15 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
         package_path = subprocess.check_output([
             "git", "rev-parse", "--show-toplevel"]).strip()
         package_name = basename(abspath(package_path)).replace(".git", "")
-#        print("Package name: ", package_name)
     except Exception as e:
-        print("Exception: %s" % e)
+        logging.error("Exception: %s" % e)
         pass
     if latest_commit:
         # If more than one commit to unpack
         latest_commit = latest_commit.split("\n")
         # Reverse if there are multiple commits
         for commit in latest_commit[::-1]:
-            # print("commit: ", commit)
+            logging.info("commit: ", commit)
             commit_id, author, commit_msg, timestamp = commit.split("|")
             pubDate = datetime.datetime.fromtimestamp(
                         float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
@@ -101,10 +97,10 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
             try:
                 write_feed(entry, fpath)
             except IOError as e:
-                print("Error writing feed", e)
+                logging.error("Error writing feed", e)
             # Limit feed length to 200
-#            try:
-#                limit_feed_length(fpath, length)
-#            except Exception as e:
-#                print("Error limiting feed size", e)
+            try:
+                limit_feed_length(fpath, length)
+            except Exception as e:
+                logging.error("Error limiting feed size", e)
     return
