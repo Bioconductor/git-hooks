@@ -2,7 +2,6 @@ import subprocess
 import datetime
 import re
 from os.path import basename, abspath
-import fcntl
 from xml.etree.ElementTree import parse
 import logging
 logging.basicConfig(filename='post-recieve.log',level=logging.DEBUG)
@@ -19,46 +18,38 @@ ENTRY="""    <item>
 """
 
 
-# FIXME Remove locks
-def limit_feed_length(fpath, length):
+def limit_feed_length(fh, length):
     """ This is run everytime the feed reaches limit"""
-    with open(fpath, "r+") as f:
-        fcntl.lockf(f, fcntl.LOCK_EX)
-        doc = parse(f)
-        root = doc.getroot()
-        # Get all RSS item
-        channel_root = root.find("channel")
-        items = channel_root.findall("item")
-        # check length
-        if len(items) > length:
-            extra_items = items[length:]
-            for item in extra_items:
-                channel_root.remove(item)
-        f.seek(0)
-        f.truncate()
-        doc.write(f)
-        f.write("\n")
-        fcntl.lockf(f, fcntl.LOCK_UN)
+    doc = parse(fh)
+    root = doc.getroot()
+    # Get all RSS item
+    channel_root = root.find("channel")
+    items = channel_root.findall("item")
+    # check length
+    if len(items) > length:
+        extra_items = items[length:]
+        for item in extra_items:
+            channel_root.remove(item)
+    fh.seek(0)
+    fh.truncate()
+    doc.write(fh)
+    fh.write("\n")
     return
 
 
-# FIXME Remove locks
-def write_feed(entry, fpath):
+def write_feed(entry, fh):
     """Write feed to the beginning of the file"""
-    with open(fpath, "r+") as f:
-        fcntl.lockf(f, fcntl.LOCK_EX)
-        text = f.read()
-        text = re.sub(r'<copyright />\n',
-                      '<copyright />\n' + entry,
-                      text)
-        f.seek(0)
-        f.write(text)
-        f.flush()
-        fcntl.lockf(f, fcntl.LOCK_UN)
+    text = fh.read()
+    text = re.sub(r'<copyright />\n',
+                  '<copyright />\n' + entry,
+                  text)
+    fh.seek(0)
+    fh.write(text)
+    fh.flush()
     return
 
 
-def rss_feed(oldrev, newrev, refname, fpath, length):
+def rss_feed(oldrev, newrev, refname, fh, length):
     """Post receive hook to check start Git RSS feed"""
     try:
         latest_commit = subprocess.check_output([
@@ -82,12 +73,6 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
             pubDate = datetime.datetime.fromtimestamp(
                         float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
 
-            # Entry to the RSS feed
-            # title = package_name,
-            # description = commit_msg,
-            # author = author
-            # pubDate = pubDate
-            # guid = commit_id
             entry = ENTRY % (package_name,
                              commit_msg,
                              author,
@@ -95,12 +80,11 @@ def rss_feed(oldrev, newrev, refname, fpath, length):
                              commit_id)
             # Write FEED and sleep to avoid race condition
             try:
-                write_feed(entry, fpath)
+                write_feed(entry, fh)
             except IOError as e:
                 logging.error("Error writing feed", e)
-            # Limit feed length to 200
             try:
-                limit_feed_length(fpath, length)
+                limit_feed_length(fh, length)
             except Exception as e:
                 logging.error("Error limiting feed size", e)
     return

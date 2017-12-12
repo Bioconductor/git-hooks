@@ -3,10 +3,11 @@
 import fileinput
 from rss_feed import rss_feed
 import subprocess
-
+import fcntl
 
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
 BASE_PATH = "/home/git/rss/bioconductor.org/assets/developers/rss-feeds/"
+WEBSITE_DIR = "/home/git/rss/bioconductor.org/"
 
 
 def git_pull(cwd):
@@ -27,7 +28,7 @@ def git_add(path, cwd, force=False):
 
 def git_commit(message, cwd):
     """Commit files to git server."""
-    cmd = ['git', '-C', cwd, 'commit', '-m', message]
+    cmd = ['git', '-C', cwd, 'commit', '-a', '-m', message]
     subprocess.check_call(cmd)
     return
 
@@ -45,9 +46,16 @@ if __name__ == "__main__":
     fpath_release = BASE_PATH + "gitlog.release.xml"
     length = 200
     # Run function for RSS feed
-#    f = open('/tmp/locktest', 'r')
-    # FIXME obtain a lock
-    # git -C "" pull
+    fh = open('fpath', 'r+')
+    fh2 = open('fpath_release', 'r+')
+
+    # Obtain a lock
+    fcntl.lockf(fh, fcntl.LOCK_EX)
+    fcntl.lockf(fh2, fcntl.LOCK_EX)
+
+    # git pull from website
+    git_pull(WEBSITE_DIR)
+
     for line in fileinput.input():
         std_input = line.split(" ")
         oldrev, newrev, refname = [item.strip() for item in std_input]
@@ -58,12 +66,16 @@ if __name__ == "__main__":
         # Split feed into correct files
         if ("RELEASE" in refname):
             # RSS-feed post-receive hook
-            rss_feed(oldrev, newrev, refname, fpath_release, length)
+            rss_feed(oldrev, newrev, refname, fh2, length)
         else:
-            rss_feed(oldrev, newrev, refname, fpath, length)
+            rss_feed(oldrev, newrev, refname, fh, length)
 
-    # commit to gitolite
-    ## git -C "/home/git/rss/bioconductor.org/" add
-    ## git -C "" commit
-    ## git -C ""  push
-    ### FIXME release the lock
+    # git add and commit to gitolite
+    git_commit("RSS feed update", WEBSITE_DIR)
+    # git push to gitolite: bioconductor.org
+    git_push(WEBSITE_DIR)
+    # Release the lock
+    fcntl.lockf(fh, fcntl.LOCK_UN)
+    fcntl.lockf(fh2, fcntl.LOCK_UN)
+    fh.close()
+    fh2.close()
