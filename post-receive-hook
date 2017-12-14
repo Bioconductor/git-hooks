@@ -17,25 +17,23 @@ WEBSITE_DIR = "/home/git/rss/bioconductor.org/"
 def git_pull(cwd):
     """Git svn fetch branch."""
     cmd = ['git', '-C', cwd ,'pull']
-    # subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
     logging.info(cmd)
     return
 
 
-def git_add(path, cwd, force=False):
+def git_add(path, cwd):
     """Add files to git."""
     cmd = ['git', '-C', cwd, 'add', path]
-    if force:
-        cmd = ['git', '-C', cwd ,'add', '-f', path]
-    # subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
     logging.info(cmd)
     return
 
 
 def git_commit(message, cwd):
     """Commit files to git server."""
-    cmd = ['git', '-C', cwd, 'commit', '-a', '-m', message]
-    # subprocess.check_call(cmd)
+    cmd = ['git', '-C', cwd, 'commit', '-m', message]
+    subprocess.check_call(cmd)
     logging.info(cmd)
     return
 
@@ -43,7 +41,7 @@ def git_commit(message, cwd):
 def git_push(cwd, remote="origin", branch="master"):
     """Git svn fetch branch."""
     cmd = ['git', '-C', cwd,  'push', remote, branch]
-    # subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
     logging.info(cmd)
     return
 
@@ -98,6 +96,9 @@ if __name__ == "__main__":
     fpath_release = BASE_PATH + "gitlog.release.xml"
     length = 200
 
+    # git pull from website
+    git_pull(WEBSITE_DIR)
+
     # Run function for RSS feed
     feed = open(fpath, "r+")
     feed_release = open(fpath_release, 'r+')
@@ -105,9 +106,6 @@ if __name__ == "__main__":
     # Obtain a lock
     fcntl.lockf(feed, fcntl.LOCK_EX)
     fcntl.lockf(feed_release, fcntl.LOCK_EX)
-
-    # git pull from website
-    git_pull(WEBSITE_DIR)
 
     for line in fileinput.input():
         std_input = line.split(" ")
@@ -126,6 +124,7 @@ if __name__ == "__main__":
             write_and_limit_feed(entry, length, feed)
 
     # git add and commit to gitolite
+    git_add(BASE_PATH, WEBSITE_DIR)
     git_commit("RSS feed update", WEBSITE_DIR)
     # git push to gitolite: bioconductor.org
     git_push(WEBSITE_DIR)
@@ -134,3 +133,4 @@ if __name__ == "__main__":
     fcntl.lockf(feed_release, fcntl.LOCK_UN)
     feed.close()
     feed_release.close()
+    logging.info("Exit after removing locks")

@@ -7,7 +7,6 @@ import logging
 
 
 ENTRY="""
-
     <item>
       <title>%s</title>
       <link>https://www.bioconductor.org</link>
