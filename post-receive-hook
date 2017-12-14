@@ -18,9 +18,11 @@ WEBSITE_DIR = "/home/git/rss/bioconductor.org/"
 
 def git_pull(cwd):
     """Git svn fetch branch."""
-    cmd = ['git', '-C', os.path.abspath(cwd) ,'pull']
+    cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd) ,'pull']
     os.system(" ".join(cmd))
     logging.info(cmd)
+    print(cmd)
+    print("Git pull : This worked")
     return
 
 
