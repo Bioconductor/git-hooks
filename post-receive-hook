@@ -25,7 +25,7 @@ def git_pull(cwd):
 
 def git_add(path, cwd):
     """Add files to git."""
-    cmd = ['evn', '-i', 'git', '-C', os.path.abspath(cwd), 'add', path]
+    cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd), 'add', path]
     #    subprocess.check_call(cmd)
     os.system(" ".join(cmd))
     logging.info(cmd)
