@@ -7,7 +7,6 @@ import subprocess
 import fcntl
 import sys
 import os
-import getpass
 import logging
 logging.basicConfig(filename='/tmp/post-recieve.log',level=logging.DEBUG)
 
@@ -21,16 +20,12 @@ def git_pull(cwd):
     cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd) ,'pull']
     os.system(" ".join(cmd))
     logging.info(cmd)
-    print(cmd)
-    print("Git pull : This worked")
     return
 
 
 def git_add(path, cwd):
     """Add files to git."""
-    cmd = ['git', '-C', os.path.abspath(cwd), 'add', path]
-    print("cwd: ", os.getcwd())
-    print("user: ", getpass.getuser())
+    cmd = ['evn', '-i', 'git', '-C', os.path.abspath(cwd), 'add', path]
     #    subprocess.check_call(cmd)
     os.system(" ".join(cmd))
     logging.info(cmd)
@@ -39,17 +34,16 @@ def git_add(path, cwd):
 
 def git_commit(message, cwd):
     """Commit files to git server."""
-    cmd = ['git', '-C', os.path.abspath(cwd), 'commit', '-m', message]
+    cmd = ['env', 'i', 'git', '-C', os.path.abspath(cwd), 'commit', '-m', message]
     #subprocess.check_call(cmd)
     os.system(" ".join(cmd))
-    print(cmd)
     logging.info(cmd)
     return
 
 
 def git_push(cwd, remote="origin", branch="master"):
     """Git svn fetch branch."""
-    cmd = ['git', '-C', os.path.abspath(cwd),  'push', remote, branch]
+    cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd),  'push', remote, branch]
     #subprocess.check_call(cmd)
     os.system(" ".join(cmd))
     print(cmd)
@@ -137,8 +131,6 @@ if __name__ == "__main__":
     fcntl.lockf(feed_release, fcntl.LOCK_EX)
 
     # git pull from website
-    print("website dir: ", WEBSITE_DIR)
-    print("cwd: ", os.getcwd())
     git_pull(WEBSITE_DIR)
 
     for line in fileinput.input():
