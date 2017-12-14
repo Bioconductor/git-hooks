@@ -2,13 +2,12 @@
 
 import fileinput
 from rss_feed import rss_feed
-from xml.etree.ElementTree import parse
+from xml.etree.ElementTree import parse, fromstring
 import subprocess
 import fcntl
 import sys
 import os
 import getpass
-import re
 import logging
 logging.basicConfig(filename='/tmp/post-recieve.log',level=logging.DEBUG)
 
@@ -19,7 +18,7 @@ WEBSITE_DIR = "/home/git/rss/bioconductor.org/"
 
 def git_pull(cwd):
     """Git svn fetch branch."""
-    cmd = ['git', '-C', cwd ,'pull']
+    cmd = ['git', '-C', os.path.abspath(cwd) ,'pull']
     os.system(" ".join(cmd))
     logging.info(cmd)
     return
@@ -27,7 +26,7 @@ def git_pull(cwd):
 
 def git_add(path, cwd):
     """Add files to git."""
-    cmd = ['git', '-C', cwd, 'add', path]
+    cmd = ['git', '-C', os.path.abspath(cwd), 'add', path]
     print("cwd: ", os.getcwd())
     print("user: ", getpass.getuser())
     #    subprocess.check_call(cmd)
@@ -38,18 +37,20 @@ def git_add(path, cwd):
 
 def git_commit(message, cwd):
     """Commit files to git server."""
-    cmd = ['git', '-C', cwd, 'commit', '-m', message]
+    cmd = ['git', '-C', os.path.abspath(cwd), 'commit', '-m', message]
     #subprocess.check_call(cmd)
     os.system(" ".join(cmd))
+    print(cmd)
     logging.info(cmd)
     return
 
 
 def git_push(cwd, remote="origin", branch="master"):
     """Git svn fetch branch."""
-    cmd = ['git', '-C', cwd,  'push', remote, branch]
+    cmd = ['git', '-C', os.path.abspath(cwd),  'push', remote, branch]
     #subprocess.check_call(cmd)
     os.system(" ".join(cmd))
+    print(cmd)
     logging.info(cmd)
     return
 
@@ -134,6 +135,8 @@ if __name__ == "__main__":
     fcntl.lockf(feed_release, fcntl.LOCK_EX)
 
     # git pull from website
+    print("website dir: ", WEBSITE_DIR)
+    print("cwd: ", os.getcwd())
     git_pull(WEBSITE_DIR)
 
     for line in fileinput.input():
