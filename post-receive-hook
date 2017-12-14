@@ -2,7 +2,7 @@
 
 import fileinput
 from rss_feed import rss_feed
-from xml.etree.ElementTree import parse,fromstring
+from xml.etree.ElementTree import parse
 import subprocess
 import fcntl
 import sys
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     # git push to gitolite: bioconductor.org
     git_push(WEBSITE_DIR)
     # Release the lock
-    fcntl.lockf(f, fcntl.LOCK_UN)
-    fcntl.lockf(f2, fcntl.LOCK_UN)
-    f.close()
-    f2.close()
+    fcntl.lockf(feed, fcntl.LOCK_UN)
+    fcntl.lockf(feed_release, fcntl.LOCK_UN)
+    feed.close()
+    feed_release.close()
