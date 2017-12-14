@@ -14,8 +14,8 @@ ENTRY="""
       <author>%s</author>
       <pubDate>%s</pubDate>
       <guid>%s</guid>
-    </item>
-"""
+    </item>\n
+    """
 
 
 def rss_feed(oldrev, newrev, refname, length):
