@@ -6,6 +6,7 @@ from xml.etree.ElementTree import parse
 import subprocess
 import fcntl
 import sys
+import os
 import re
 import logging
 logging.basicConfig(filename='/tmp/post-recieve.log',level=logging.DEBUG)
@@ -25,7 +26,8 @@ def git_pull(cwd):
 
 def git_add(path, cwd):
     """Add files to git."""
-    cmd = ['git', '-C', cwd, 'add', path]
+    cmd = ['/usr/bin/git', '-C', cwd, 'add', path]
+    print(os.getcwd())
     subprocess.check_call(cmd)
     logging.info(cmd)
     return
