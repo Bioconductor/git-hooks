@@ -7,6 +7,7 @@ import logging
 
 
 ENTRY="""
+
     <item>
       <title>%s</title>
       <link>https://www.bioconductor.org</link>
@@ -14,7 +15,7 @@ ENTRY="""
       <author>%s</author>
       <pubDate>%s</pubDate>
       <guid>%s</guid>
-    </item>\n
+    </item>
 """
 
 
