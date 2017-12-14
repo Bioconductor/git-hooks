@@ -31,10 +31,19 @@ def git_add(path, cwd):
     return
 
 
+def subprocess_cmd(command):
+    process = subprocess.Popen(command,stdout=subprocess.PIPE, shell=True)
+    proc_stdout = process.communicate()[0].strip()
+    return proc_stdout
+
+
 def git_commit(message, cwd):
     """Commit files to git server."""
-    cmd = ['git', '-C', os.path.abspath(cwd), 'commit', '-m', message]
-    subprocess.check_call(cmd)
+#    cmd = ['env', '-i',
+#           'git', '-C', os.path.abspath(cwd), 'commit', '-m', message]
+#    subprocess.check_call(cmd)
+    cmd = "env -i; git config user.email 'nitesh.turaga@gmail.com'; git config user.name 'nturaga' ; git -C %s commit -m 'RSS feed update'" % cwd
+    subprocess_cmd(cmd)
     logging.info(cmd)
     return
 
@@ -116,7 +125,7 @@ if __name__ == "__main__":
     # Path to feed.xml
     fpath = BASE_PATH + "gitlog.xml"
     fpath_release = BASE_PATH + "gitlog.release.xml"
-    length = 10
+    length = 199
 
     # git pull from website
     git_pull(WEBSITE_DIR)
