@@ -119,10 +119,6 @@ if __name__ == "__main__":
     fpath_release = BASE_PATH + "gitlog.release.xml"
     length = 199
 
-    # git pull from website
-    git_pull(WEBSITE_DIR)
-
-#    print(os.system("env"))
     # Run function for RSS feed
     feed = open(fpath, "r+")
     feed_release = open(fpath_release, 'r+')
@@ -154,9 +150,4 @@ if __name__ == "__main__":
     feed.close()
     feed_release.close()
 
-    # git add and commit to gitolite
-    git_add(BASE_PATH, WEBSITE_DIR)
-    git_commit("RSS feed update", WEBSITE_DIR)
-    # git push to gitolite: bioconductor.org
-    git_push(WEBSITE_DIR)
     logging.info("Exit after removing locks")
