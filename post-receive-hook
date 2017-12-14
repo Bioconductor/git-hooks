@@ -122,7 +122,7 @@ if __name__ == "__main__":
     # git pull from website
     git_pull(WEBSITE_DIR)
 
-    print(os.system("env"))
+#    print(os.system("env"))
     # Run function for RSS feed
     feed = open(fpath, "r+")
     feed_release = open(fpath_release, 'r+')
