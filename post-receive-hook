@@ -20,8 +20,7 @@ WEBSITE_DIR = "/home/git/rss/bioconductor.org/"
 def git_pull(cwd):
     """Git svn fetch branch."""
     cmd = ['git', '-C', cwd ,'pull']
-#    subprocess.check_call(cmd)
-    logging.info(cmd)
+    os.system(" ".join(cmd))
     return
 
 
@@ -122,9 +121,6 @@ if __name__ == "__main__":
     fpath_release = BASE_PATH + "gitlog.release.xml"
     length = 10
 
-    # git pull from website
-    git_pull(WEBSITE_DIR)
-
     # Run function for RSS feed
     feed = open(fpath, "r+")
     feed_release = open(fpath_release, 'r+')
@@ -132,6 +128,9 @@ if __name__ == "__main__":
     # Obtain a lock
     fcntl.lockf(feed, fcntl.LOCK_EX)
     fcntl.lockf(feed_release, fcntl.LOCK_EX)
+
+    # git pull from website
+    git_pull(WEBSITE_DIR)
 
     for line in fileinput.input():
         std_input = line.split(" ")
