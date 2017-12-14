@@ -19,6 +19,7 @@ WEBSITE_DIR = "/home/git/rss/bioconductor.org/"
 def git_pull(cwd):
     """Git svn fetch branch."""
     cmd = ['git', '-C', os.path.abspath(cwd) ,'pull']
+    subprocess.check_call(["unset", "GIT_DIR"], cwd=cwd)
     os.system(" ".join(cmd))
     logging.info(cmd)
     return
@@ -30,6 +31,7 @@ def git_add(path, cwd):
     print("cwd: ", os.getcwd())
     print("user: ", getpass.getuser())
     #    subprocess.check_call(cmd)
+    subprocess.check_call(["unset", "GIT_DIR"], cwd=cwd)
     os.system(" ".join(cmd))
     logging.info(cmd)
     return
@@ -39,6 +41,7 @@ def git_commit(message, cwd):
     """Commit files to git server."""
     cmd = ['git', '-C', os.path.abspath(cwd), 'commit', '-m', message]
     #subprocess.check_call(cmd)
+    subprocess.check_call(["unset", "GIT_DIR"], cwd=cwd)
     os.system(" ".join(cmd))
     print(cmd)
     logging.info(cmd)
@@ -49,6 +52,7 @@ def git_push(cwd, remote="origin", branch="master"):
     """Git svn fetch branch."""
     cmd = ['git', '-C', os.path.abspath(cwd),  'push', remote, branch]
     #subprocess.check_call(cmd)
+    subprocess.check_call(["unset", "GIT_DIR"], cwd=cwd)
     os.system(" ".join(cmd))
     print(cmd)
     logging.info(cmd)
