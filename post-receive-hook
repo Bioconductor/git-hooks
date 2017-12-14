@@ -26,7 +26,7 @@ def git_pull(cwd):
 def git_add(path, cwd):
     """Add files to git."""
     cmd = ['git', '-C', cwd, 'add', path]
-#    subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
     logging.info(cmd)
     return
 
@@ -34,7 +34,7 @@ def git_add(path, cwd):
 def git_commit(message, cwd):
     """Commit files to git server."""
     cmd = ['git', '-C', cwd, 'commit', '-m', message]
-#    subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
     logging.info(cmd)
     return
 
@@ -42,7 +42,7 @@ def git_commit(message, cwd):
 def git_push(cwd, remote="origin", branch="master"):
     """Git svn fetch branch."""
     cmd = ['git', '-C', cwd,  'push', remote, branch]
-#    subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
     logging.info(cmd)
     return
 
