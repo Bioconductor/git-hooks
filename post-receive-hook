@@ -6,6 +6,7 @@ from xml.etree.ElementTree import parse
 import subprocess
 import fcntl
 import sys
+import re
 import logging
 logging.basicConfig(filename='/tmp/post-recieve.log',level=logging.DEBUG)
 
@@ -45,9 +46,27 @@ def git_push(cwd, remote="origin", branch="master"):
     logging.info(cmd)
     return
 
+
+def indent(elem, level=0):
+    i = "\n" + level*"  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for elem in elem:
+            indent(elem, level+1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
+
+
 def write_and_limit_feed(entry_list, length, feed):
     doc = parse(feed)
     root = doc.getroot()
+
     # Get items
     channel_root = root.find("channel")
     items = channel_root.findall("item")
@@ -60,9 +79,11 @@ def write_and_limit_feed(entry_list, length, feed):
         extra_items = items[length:]
         for extra_item in extra_items:
             channel_root.remove(extra_item)
+    indent(channel_root)
     feed.seek(0)
     feed.truncate()
     doc.write(feed)
+    feed.write("\n")
     return feed
 
 
@@ -80,12 +101,13 @@ if False:
     <item>
       <title>2309fc133512c4e25d8942c3d0ae6fc198bf9ba9</title>
       <link>https://www.bioconductor.org</link>
-      <description>Remove duplicate</description>
+      <description>4: test</description>
       <author>Nitesh</author>
       <pubDate>2017-12-08 17:26:18</pubDate>
     </item>
     """
-    write_and_limit_feed(sample_entry, 5, feed)
+    entry = fromstring(sample_entry)
+    write_and_limit_feed([entry], 5, fh)
     fh.close()
     sys.exit(0)
 
