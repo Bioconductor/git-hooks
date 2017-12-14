@@ -2,8 +2,13 @@
 
 import fileinput
 from rss_feed import rss_feed
+from xml.etree.ElementTree import parse,fromstring
 import subprocess
 import fcntl
+import sys
+import logging
+# FIXME: Change location after testing
+logging.basicConfig(filename='/tmp/post-recieve.log',level=logging.DEBUG)
 
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
 BASE_PATH = "/home/git/rss/bioconductor.org/assets/developers/rss-feeds/"
@@ -43,19 +48,64 @@ def git_push(cwd, remote="origin", branch="master"):
     print(cmd)
     return
 
+def write_and_limit_feed(entry_list, length, feed):
+    doc = parse(feed)
+    root = doc.getroot()
+    # Get items
+    channel_root = root.find("channel")
+    items = channel_root.findall("item")
+    # Write feed
+    for entry in entry_list:
+        # 5 is the entry position in the feed
+        channel_root.insert(5, entry)
+    # Remove extra elements
+    if len(items) > length:
+        extra_items = items[length:]
+        for extra_item in extra_items:
+            channel_root.remove(extra_item)
+    feed.seek(0)
+    feed.truncate()
+    doc.write(feed)
+    return feed
+
+
+if False:
+    fh = "/tmp/gitlog.xml"
+    feed = open(fh, "r+")
+    refname=None
+    revs = subprocess.check_output([
+        "git", "log", "-2", "--format=%H"
+    ]).splitlines()
+    newrev = revs[0].strip()
+    oldrev = revs[1].strip()
+    rss_feed(oldrev, newrev, refname, 5)
+    sample_entry = """
+    <item>
+      <title>2309fc133512c4e25d8942c3d0ae6fc198bf9ba9</title>
+      <link>https://www.bioconductor.org</link>
+      <description>Remove duplicate x doc entry MAE-helpers</description>
+      <author>LiNk-NY</author>
+      <pubDate>2017-12-08 17:26:18</pubDate>
+    </item>
+    """
+    write_and_limit_feed(sample_entry, 5, feed)
+    fh.close()
+    sys.exit(0)
+
 
 if __name__ == "__main__":
     # Path to feed.xml
     fpath = BASE_PATH + "gitlog.xml"
     fpath_release = BASE_PATH + "gitlog.release.xml"
     length = 200
+
     # Run function for RSS feed
-    fh = open(fpath, 'r+')
-    fh2 = open(fpath_release, 'r+')
+    feed = open(fpath, "r+")
+    feed_release = open(fpath_release, 'r+')
 
     # Obtain a lock
-    fcntl.lockf(fh, fcntl.LOCK_EX)
-    fcntl.lockf(fh2, fcntl.LOCK_EX)
+    fcntl.lockf(feed, fcntl.LOCK_EX)
+    fcntl.lockf(feed_release, fcntl.LOCK_EX)
 
     # git pull from website
     git_pull(WEBSITE_DIR)
@@ -70,16 +120,18 @@ if __name__ == "__main__":
         # Split feed into correct files
         if ("RELEASE" in refname):
             # RSS-feed post-receive hook
-            rss_feed(oldrev, newrev, refname, fh2, length)
+            entry = rss_feed(oldrev, newrev, refname, length)
+            write_and_limit_feed(entry, length, feed_release)
         else:
-            rss_feed(oldrev, newrev, refname, fh, length)
+            entry = rss_feed(oldrev, newrev, refname, length)
+            write_and_limit_feed(entry, length, feed)
 
     # git add and commit to gitolite
     git_commit("RSS feed update", WEBSITE_DIR)
     # git push to gitolite: bioconductor.org
     git_push(WEBSITE_DIR)
     # Release the lock
-    fcntl.lockf(fh, fcntl.LOCK_UN)
-    fcntl.lockf(fh2, fcntl.LOCK_UN)
-    fh.close()
-    fh2.close()
+    fcntl.lockf(f, fcntl.LOCK_UN)
+    fcntl.lockf(f2, fcntl.LOCK_UN)
+    f.close()
+    f2.close()
