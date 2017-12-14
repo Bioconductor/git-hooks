@@ -46,7 +46,6 @@ def git_push(cwd, remote="origin", branch="master"):
     cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd),  'push', remote, branch]
     #subprocess.check_call(cmd)
     os.system(" ".join(cmd))
-    print(cmd)
     logging.info(cmd)
     return
 
