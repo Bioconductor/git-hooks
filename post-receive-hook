@@ -18,7 +18,7 @@ WEBSITE_DIR = "/home/git/rss/bioconductor.org/"
 def git_pull(cwd):
     """Git svn fetch branch."""
     cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd) ,'pull']
-    os.system(" ".join(cmd))
+    subprocess.check_call(cmd)
     logging.info(cmd)
     return
 
@@ -26,28 +26,23 @@ def git_pull(cwd):
 def git_add(path, cwd):
     """Add files to git."""
     cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd), 'add', path]
-    #    subprocess.check_call(cmd)
-    print("git add")
-    os.system(" ".join(cmd))
+    subprocess.check_call(cmd)
     logging.info(cmd)
     return
 
 
 def git_commit(message, cwd):
     """Commit files to git server."""
-    cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd), 'commit', '-m', message]
-    #subprocess.check_call(cmd)
-    print("git commit")
-    os.system(" ".join(cmd))
+    cmd = ['git', '-C', os.path.abspath(cwd), 'commit', '-m', message]
+    subprocess.check_call(cmd)
     logging.info(cmd)
     return
 
 
 def git_push(cwd, remote="origin", branch="master"):
     """Git svn fetch branch."""
-    cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd),  'push', remote, branch]
-    #subprocess.check_call(cmd)
-    os.system(" ".join(cmd))
+    cmd = ['git', '-C', os.path.abspath(cwd),  'push', remote, branch]
+    subprocess.check_call(cmd)
     logging.info(cmd)
     return
 
