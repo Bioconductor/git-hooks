@@ -34,7 +34,7 @@ def git_add(path, cwd):
 
 def git_commit(message, cwd):
     """Commit files to git server."""
-    cmd = ['env', 'i', 'git', '-C', os.path.abspath(cwd), 'commit', '-m', message]
+    cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd), 'commit', '-m', message]
     #subprocess.check_call(cmd)
     os.system(" ".join(cmd))
     logging.info(cmd)
