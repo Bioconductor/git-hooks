@@ -18,7 +18,7 @@ WEBSITE_DIR = "/home/git/rss/bioconductor.org/"
 def git_pull(cwd):
     """Git svn fetch branch."""
     cmd = ['git', '-C', cwd ,'pull']
-    # subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
     print(cmd)
     return
 
@@ -28,7 +28,7 @@ def git_add(path, cwd, force=False):
     cmd = ['git', '-C', cwd, 'add', path]
     if force:
         cmd = ['git', '-C', cwd ,'add', '-f', path]
-    # subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
     print(cmd)
     return
 
@@ -36,7 +36,7 @@ def git_add(path, cwd, force=False):
 def git_commit(message, cwd):
     """Commit files to git server."""
     cmd = ['git', '-C', cwd, 'commit', '-a', '-m', message]
-    #subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
     print(cmd)
     return
 
@@ -44,7 +44,7 @@ def git_commit(message, cwd):
 def git_push(cwd, remote="origin", branch="master"):
     """Git svn fetch branch."""
     cmd = ['git', '-C', cwd,  'push', remote, branch]
-    #subprocess.check_call(cmd)
+    subprocess.check_call(cmd)
     print(cmd)
     return
 
@@ -83,8 +83,8 @@ if False:
     <item>
       <title>2309fc133512c4e25d8942c3d0ae6fc198bf9ba9</title>
       <link>https://www.bioconductor.org</link>
-      <description>Remove duplicate x doc entry MAE-helpers</description>
-      <author>LiNk-NY</author>
+      <description>Remove duplicate</description>
+      <author>Nitesh</author>
       <pubDate>2017-12-08 17:26:18</pubDate>
     </item>
     """
