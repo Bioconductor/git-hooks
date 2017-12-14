@@ -27,6 +27,7 @@ def git_add(path, cwd):
     """Add files to git."""
     cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd), 'add', path]
     #    subprocess.check_call(cmd)
+    print("git add")
     os.system(" ".join(cmd))
     logging.info(cmd)
     return
@@ -36,6 +37,7 @@ def git_commit(message, cwd):
     """Commit files to git server."""
     cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd), 'commit', '-m', message]
     #subprocess.check_call(cmd)
+    print("git commit")
     os.system(" ".join(cmd))
     logging.info(cmd)
     return
@@ -121,6 +123,9 @@ if __name__ == "__main__":
     fpath_release = BASE_PATH + "gitlog.release.xml"
     length = 10
 
+    # git pull from website
+    git_pull(WEBSITE_DIR)
+
     # Run function for RSS feed
     feed = open(fpath, "r+")
     feed_release = open(fpath_release, 'r+')
@@ -129,8 +134,6 @@ if __name__ == "__main__":
     fcntl.lockf(feed, fcntl.LOCK_EX)
     fcntl.lockf(feed_release, fcntl.LOCK_EX)
 
-    # git pull from website
-    git_pull(WEBSITE_DIR)
 
     for line in fileinput.input():
         std_input = line.split(" ")
@@ -148,14 +151,15 @@ if __name__ == "__main__":
             entry = rss_feed(oldrev, newrev, refname, length)
             write_and_limit_feed(entry, length, feed)
 
-    # git add and commit to gitolite
-    git_add(BASE_PATH, WEBSITE_DIR)
-    git_commit("RSS feed update", WEBSITE_DIR)
-    # git push to gitolite: bioconductor.org
-    git_push(WEBSITE_DIR)
     # Release the lock
     fcntl.lockf(feed, fcntl.LOCK_UN)
     fcntl.lockf(feed_release, fcntl.LOCK_UN)
     feed.close()
     feed_release.close()
+
+    # git add and commit to gitolite
+    git_add(BASE_PATH, WEBSITE_DIR)
+    git_commit("RSS feed update", WEBSITE_DIR)
+    # git push to gitolite: bioconductor.org
+    git_push(WEBSITE_DIR)
     logging.info("Exit after removing locks")
