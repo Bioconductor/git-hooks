@@ -6,46 +6,11 @@ from xml.etree.ElementTree import parse, fromstring
 import subprocess
 import fcntl
 import sys
-import os
 import logging
-logging.basicConfig(filename='/tmp/post-recieve.log',level=logging.DEBUG)
+logging.basicConfig(filename='/tmp/post-recieve.log', level=logging.DEBUG)
 
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
-BASE_PATH = "/home/git/rss/bioconductor.org/assets/developers/rss-feeds/"
-WEBSITE_DIR = "/home/git/rss/bioconductor.org/"
-
-
-def git_pull(cwd):
-    """Git svn fetch branch."""
-    cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd) ,'pull']
-    subprocess.check_call(cmd)
-    logging.info(cmd)
-    return
-
-
-def git_add(path, cwd):
-    """Add files to git."""
-    cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd), 'add', path]
-    subprocess.check_call(cmd)
-    logging.info(cmd)
-    return
-
-
-def git_commit(message, cwd):
-    """Commit files to git server."""
-    cmd = ['env', '-i',
-           'git', '-C', os.path.abspath(cwd), 'commit', '-m', message]
-    subprocess.check_call(cmd)
-    logging.info(cmd)
-    return
-
-
-def git_push(cwd, remote="origin", branch="master"):
-    """Git svn fetch branch."""
-    cmd = ['env', '-i', 'git', '-C', os.path.abspath(cwd),  'push', remote, branch]
-    subprocess.check_call(cmd)
-    logging.info(cmd)
-    return
+BASE_PATH = "/home/git/rss/"
 
 
 def indent(elem, level=0):
@@ -91,7 +56,7 @@ def write_and_limit_feed(entry_list, length, feed):
 if False:
     fh = "/tmp/gitlog.xml"
     feed = open(fh, "r+")
-    refname=None
+    refname = None
     revs = subprocess.check_output([
         "git", "log", "-2", "--format=%H"
     ]).splitlines()
@@ -126,7 +91,6 @@ if __name__ == "__main__":
     # Obtain a lock
     fcntl.lockf(feed, fcntl.LOCK_EX)
     fcntl.lockf(feed_release, fcntl.LOCK_EX)
-
 
     for line in fileinput.input():
         std_input = line.split(" ")
