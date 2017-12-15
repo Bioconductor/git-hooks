@@ -9,7 +9,7 @@ import logging
 ENTRY="""
     <item>
       <title>%s</title>
-      <link>https://www.bioconductor.org</link>
+      <link>https://bioconductor.org</link>
       <description>%s</description>
       <author>%s</author>
       <pubDate>%s</pubDate>
