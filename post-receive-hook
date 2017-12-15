@@ -108,6 +108,10 @@ if __name__ == "__main__":
             entry = rss_feed(oldrev, newrev, refname, length)
             write_and_limit_feed(entry, length, feed)
 
+    cmd = ['scp', 'gitlog.*',
+           'biocadmin@staging.bioconductor.org:/home/biocadmin/bioc-test-web/bioconductor.org/assets/developers/rss-feeds/.']
+    subprocess.check_call(cmd)
+    
     # Release the lock
     fcntl.lockf(feed, fcntl.LOCK_UN)
     fcntl.lockf(feed_release, fcntl.LOCK_UN)
@@ -115,3 +119,4 @@ if __name__ == "__main__":
     feed_release.close()
 
     logging.info("Exit after removing locks")
+
