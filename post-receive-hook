@@ -50,6 +50,7 @@ def write_and_limit_feed(entry_list, length, feed):
     feed.truncate()
     doc.write(feed)
     feed.write("\n")
+    feed.flush()
     return feed
 
 
