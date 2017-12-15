@@ -108,9 +108,9 @@ if __name__ == "__main__":
             entry = rss_feed(oldrev, newrev, refname, length)
             write_and_limit_feed(entry, length, feed)
 
-    cmd = ['scp', 'gitlog.*',
+    cmd = ['scp', 'gitlog.xml', 'gitlog.release.xml',
            'biocadmin@staging.bioconductor.org:/home/biocadmin/bioc-test-web/bioconductor.org/assets/developers/rss-feeds/.']
-    subprocess.check_call(cmd)
+    subprocess.check_call(cmd, cwd=BASE_PATH)
     
     # Release the lock
     fcntl.lockf(feed, fcntl.LOCK_UN)
