@@ -10,7 +10,7 @@ ENTRY="""
     <item>
       <title>%s</title>
       <link>https://bioconductor.org</link>
-      <description><![CDATA[%s]]></description>
+      <description><![CDATA[ %s ]]></description>
       <author>%s</author>
       <pubDate>%s</pubDate>
       <guid>%s</guid>
