@@ -103,14 +103,17 @@ if __name__ == "__main__":
         if (oldrev == ZERO_COMMIT or newrev == ZERO_COMMIT):
             continue
         # Split feed into correct files
-        if ("RELEASE" in refname):
-            # RSS-feed post-receive hook
-            entry = rss_feed(oldrev, newrev, refname, length)
-            write_and_limit_feed(entry, length, feed_release)
-        else:
-            entry = rss_feed(oldrev, newrev, refname, length)
-            write_and_limit_feed(entry, length, feed)
-
+        try:
+            if ("RELEASE" in refname):
+                # RSS-feed post-receive hook
+                entry = rss_feed(oldrev, newrev, refname, length)
+                write_and_limit_feed(entry, length, feed_release)
+            else:
+                entry = rss_feed(oldrev, newrev, refname, length)
+                write_and_limit_feed(entry, length, feed)
+        except Exception as e:
+            print("Note: failed to update RSS feed; git repository updated successfully.")
+            logging.error(e)
     cmd = ['scp', 'gitlog.xml', 'gitlog.release.xml',
            'biocadmin@staging.bioconductor.org:/home/biocadmin/bioc-test-web/bioconductor.org/assets/developers/rss-feeds/.']
     subprocess.check_call(cmd, cwd=BASE_PATH)
