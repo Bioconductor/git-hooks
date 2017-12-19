@@ -68,7 +68,9 @@ if False:
     <item>
       <title>2309fc133512c4e25d8942c3d0ae6fc198bf9ba9</title>
       <link>https://www.bioconductor.org</link>
-      <description>4: test</description>
+      <description><![CDATA[
+on't import "$<-" method from the IRanges package (the IRanges package
+     does not export such method)]]></description>
       <author>Nitesh</author>
       <pubDate>2017-12-08 17:26:18</pubDate>
     </item>
