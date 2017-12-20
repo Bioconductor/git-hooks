@@ -44,7 +44,7 @@ def rss_feed(oldrev, newrev, refname, length):
 
             entry = ENTRY % (package_name,
                              commit_msg,
-                             author + "<" + email + ">",
+                             author + " <" + email + ">",
                              pubDate,
                              commit_id)
             # Add entry as element in xml.etree
