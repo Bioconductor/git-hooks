@@ -11,7 +11,7 @@ ENTRY="""
       <title>%s</title>
       <link>https://bioconductor.org</link>
       <description><![CDATA[ %s ]]></description>
-      <author>%s</author>
+      <author><![CDATA[ %s ]]></author>
       <pubDate>%s</pubDate>
       <guid>%s</guid>
     </item>
@@ -44,7 +44,7 @@ def rss_feed(oldrev, newrev, refname, length):
 
             entry = ENTRY % (package_name,
                              commit_msg,
-                             author + " : " + email,
+                             author + "<" + email + ">",
                              pubDate,
                              commit_id)
             # Add entry as element in xml.etree
