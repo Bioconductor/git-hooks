@@ -93,7 +93,6 @@ if __name__ == "__main__":
 
     # Obtain a lock
     fcntl.lockf(feed, fcntl.LOCK_EX)
-    fcntl.lockf(feed_release, fcntl.LOCK_EX)
 
     for line in fileinput.input():
         std_input = line.split(" ")
@@ -120,7 +119,6 @@ if __name__ == "__main__":
     
     # Release the lock
     fcntl.lockf(feed, fcntl.LOCK_UN)
-    fcntl.lockf(feed_release, fcntl.LOCK_UN)
     feed.close()
     feed_release.close()
 
