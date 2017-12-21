@@ -42,7 +42,7 @@ def rss_feed(oldrev, newrev, refname, length):
             pubDate = datetime.datetime.fromtimestamp(
                         float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
             commit_msg = subprocess.check_output(["git", "log" ,
-                                                  "--format=%B",
+                                                  "--pretty=format:%B",
                                                   "-n", "1", commit_id])
             entry = ENTRY % (package_name,
                              commit_msg,
