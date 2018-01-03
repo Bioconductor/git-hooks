@@ -9,7 +9,7 @@ import logging
 ENTRY="""
     <item>
       <title>%s</title>
-      <link>https://bioconductor.org/packages/devel/%s/</link>
+      <link>https://bioconductor.org/packages/%s/</link>
       <description><![CDATA[ %s ]]></description>
       <author><![CDATA[ %s ]]></author>
       <pubDate>%s</pubDate>
@@ -44,8 +44,12 @@ def rss_feed(oldrev, newrev, refname, length):
             commit_msg = subprocess.check_output(["git", "log" ,
                                                   "--pretty=format:%B",
                                                   "-n", "1", commit_id])
+            if "RELEASE" in refname:
+                link = package_name
+            else:
+                link = "devel/" + package_name
             entry = ENTRY % (package_name,
-                             package_name,
+                             link,
                              commit_msg,
                              author + " <" + email + ">",
                              pubDate,
