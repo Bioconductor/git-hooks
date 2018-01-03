@@ -9,7 +9,7 @@ import logging
 ENTRY="""
     <item>
       <title>%s</title>
-      <link>https://bioconductor.org/packages/%s/</link>
+      <link>https://bioconductor.org/packages/devel/%s/</link>
       <description><![CDATA[ %s ]]></description>
       <author><![CDATA[ %s ]]></author>
       <pubDate>%s</pubDate>
