@@ -9,7 +9,7 @@ import logging
 ENTRY="""
     <item>
       <title>%s</title>
-      <link>https://bioconductor.org</link>
+      <link>https://bioconductor.org/packages/%s/</link>
       <description><![CDATA[ %s ]]></description>
       <author><![CDATA[ %s ]]></author>
       <pubDate>%s</pubDate>
@@ -45,6 +45,7 @@ def rss_feed(oldrev, newrev, refname, length):
                                                   "--pretty=format:%B",
                                                   "-n", "1", commit_id])
             entry = ENTRY % (package_name,
+                             package_name,
                              commit_msg,
                              author + " <" + email + ">",
                              pubDate,
