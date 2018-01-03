@@ -85,7 +85,7 @@ if __name__ == "__main__":
     # Path to feed.xml
     fpath = BASE_PATH + "gitlog.xml"
     fpath_release = BASE_PATH + "gitlog.release.xml"
-    length = 199
+    length = 499
 
     # Run function for RSS feed
     feed = open(fpath, "r+")
