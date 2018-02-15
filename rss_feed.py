@@ -40,8 +40,8 @@ def rss_feed(oldrev, newrev, refname, length):
         for commit in latest_commit[::-1]:
             commit_id, author, email, timestamp = commit.split("|")
             print(timestamp)
-            pubDate = datetime.datetime.fromtimestamp(
-                        float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
+            #pubDate = datetime.datetime.fromtimestamp(
+            #            float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
             commit_msg = subprocess.check_output(["git", "log" ,
                                                   "--pretty=format:%B",
                                                   "-n", "1", commit_id])
@@ -53,7 +53,7 @@ def rss_feed(oldrev, newrev, refname, length):
                              link,
                              commit_msg,
                              author + " <" + email + ">",
-                             pubDate,
+                             timestamp,
                              commit_id)
             # Add entry as element in xml.etree
             entry_list.append(fromstring(entry))
