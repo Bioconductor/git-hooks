@@ -24,7 +24,7 @@ def rss_feed(oldrev, newrev, refname, length):
     try:
         latest_commit = subprocess.check_output([
             "git", "log", oldrev + ".." + newrev,
-            "--pretty=format:%H|%an|%ae|%at"
+            "--pretty=format:%H|%an|%ae|%ai"
         ])
         # Get package name
         package_path = subprocess.check_output([
@@ -39,6 +39,7 @@ def rss_feed(oldrev, newrev, refname, length):
         # Reverse if there are multiple commits
         for commit in latest_commit[::-1]:
             commit_id, author, email, timestamp = commit.split("|")
+            print(timestamp)
             pubDate = datetime.datetime.fromtimestamp(
                         float(timestamp)).strftime('%Y-%m-%d %H:%M:%S')
             commit_msg = subprocess.check_output(["git", "log" ,
