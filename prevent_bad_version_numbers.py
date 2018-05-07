@@ -31,10 +31,15 @@ def throw_error(prev_version, new_version):
 
 def git_diff(oldrev, newrev, fname):
     """Git diff between two commits."""
-    diff = subprocess.check_output(["git",
-                                    "diff",
-                                    oldrev + ".." + newrev,
-                                    "--", fname])
+    if oldrev == ZERO_COMMIT:
+        diff = subprocess.check_output(["git",
+                                        "diff", newrev,
+                                        "--", fname])
+    else:
+        diff = subprocess.check_output(["git",
+                                        "diff",
+                                        oldrev + ".." + newrev,
+                                        "--", fname])
     return diff.splitlines()
 
 
@@ -142,7 +147,6 @@ def prevent_bad_version_numbers(oldrev, newrev, refname):
     for fname in files_modified:
         if "DESCRIPTION" in fname:
             diff = git_diff(oldrev, newrev, fname)
-            # eprint("DIFF: \n", "\n".join(diff))
             prev_version, new_version = get_version_bump(diff)
             if (prev_version is None) and (new_version is None):
                 continue
