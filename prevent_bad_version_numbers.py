@@ -31,15 +31,10 @@ def throw_error(prev_version, new_version):
 
 def git_diff(oldrev, newrev, fname):
     """Git diff between two commits."""
-    if oldrev == ZERO_COMMIT:
-        diff = subprocess.check_output(["git",
-                                        "diff", newrev,
-                                        "--", fname])
-    else:
-        diff = subprocess.check_output(["git",
-                                        "diff",
-                                        oldrev + ".." + newrev,
-                                        "--", fname])
+    diff = subprocess.check_output(["git",
+                                    "diff",
+                                    oldrev + ".." + newrev,
+                                    "--", fname])
     return diff.splitlines()
 
 
@@ -51,13 +46,12 @@ def git_diff_pre_commit(fname):
     return diff.splitlines()
 
 
-def git_diff_files(commit):
+def git_diff_files(oldrev, newrev):
     """Get list of files in diff."""
     files_modified = subprocess.check_output(["git",
-                                              "diff-index",
+                                              "diff",
                                               "--name-only",
-                                              "--cached",
-                                              commit])
+                                              oldrev + ".." + newrev])
     return files_modified.splitlines()
 
 
@@ -69,7 +63,11 @@ def get_version_bump(diff):
     new_version = [line.replace("+Version:", "")
                    for line in diff
                    if line.startswith("+Version")]
+    ## If versions are equal, no version change
     if prev_version == new_version:
+        return None, None
+    ## No change in DESCRIPTION file from new package push
+    if not prev_version or not new_version:
         return None, None
     return prev_version[0].strip(), new_version[0].strip()
 
@@ -83,7 +81,7 @@ def check_version_format(prev_version, new_version):
         x0, y0, z0 = map(int, prev_version.split("."))
         x, y, z = map(int, new_version.split("."))
     except ValueError as e:
-        print('format of version number is wrong')
+        print('format of version number is wrong', e)
         throw_error(prev_version, new_version)
     return prev_version, new_version
 
@@ -143,7 +141,13 @@ def prevent_bad_version_numbers(oldrev, newrev, refname):
 
     This function acts as the wrapper for all the helper functions.
     """
-    files_modified = git_diff_files(newrev)
+    if oldrev == ZERO_COMMIT:
+        ## https://stackoverflow.com/questions/40883798/how-to-get-git-diff-of-the-first-commit
+        ## 4b825dc642cb6eb9a060e54bf8d69288fbee4904 is the
+        ## id of the "empty tree" in Git and it's always
+        ## available in every repository.
+        oldrev = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+    files_modified = git_diff_files(oldrev, newrev)
     for fname in files_modified:
         if "DESCRIPTION" in fname:
             diff = git_diff(oldrev, newrev, fname)

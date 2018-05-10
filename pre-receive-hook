@@ -46,5 +46,5 @@ if __name__ == "__main__":
         if newestrev == ZERO_COMMIT:
             newestrev = newrev
         oldestrev = oldrev
-    if newestrev != ZERO_COMMIT and oldestrev != ZERO_COMMIT:
+    if newestrev != ZERO_COMMIT:
         prevent_bad_version_numbers(oldestrev, newestrev, refname)
