@@ -95,5 +95,5 @@ def apply_hooks(hooks_dict):
 
 if __name__ == "__main__":
     conf = get_hooks_conf()
-    hooks_dict = read_bioc_conf()
+    hooks_dict = read_bioc_conf(conf)
     apply_hooks(hooks_dict)
