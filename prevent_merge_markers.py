@@ -32,7 +32,7 @@ def prevent_merge_markers(oldrev, newrev, refname):
     """
     conflicts = git_diff_files_with_conflicts(oldrev, newrev)
     # If number of files with conflicts is > 0
-    if not conflicts:
+    if conflicts:
         message = ("Error: You cannot commit without resolving merge conflicts.\n"
                    "Unresolved merge conlicts in these files: \n" +
                    ", ".join(conflicts))
