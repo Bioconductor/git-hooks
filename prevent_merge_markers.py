@@ -37,3 +37,4 @@ def prevent_merge_markers(oldrev, newrev, refname):
                    "Unresolved merge conlicts in these files: \n" +
                    ", ".join(conflicts))
         sys.exit(message)
+    return
