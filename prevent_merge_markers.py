@@ -20,9 +20,12 @@ def git_diff_files_with_conflicts(oldrev, newrev):
     files_modified = subprocess.check_output(['git',
                                               'diff',
                                               '--name-only',
-                                              '-G"<<<<<|=====|>>>>>"',
+                                              '-G"<<<<<<<|=======|>>>>>>>"',
                                               oldrev + ".." + newrev])
-    return files_modified.splitlines()
+    ## Exclude markdown files, because they can contain, title headers
+    ## which have the pattern "=======", which show title
+    files = [f for f in files_modified.splitlines() if ".md" not in f]
+    return files
 
 
 def prevent_merge_markers(oldrev, newrev, refname):
