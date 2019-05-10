@@ -34,7 +34,7 @@ def prevent_merge_markers(oldrev, newrev, refname):
     # If number of files with conflicts is > 0
     if conflicts:
         message = ("Error: You cannot commit without resolving merge conflicts.\n"
-                   "Unresolved merge conlicts in these files: \n" +
+                   "Unresolved merge conflicts in these files: \n" +
                    ", ".join(conflicts))
         sys.exit(message)
     return
