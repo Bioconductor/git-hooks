@@ -86,8 +86,8 @@ def apply_hooks(hooks_dict):
         if newrev == ZERO_COMMIT:
             continue
         # prevent merge conflict markers
-        if hooks_dict["pre-receive-hook-merge-markers"]: # enable hook
-            prevent_merge_markers(oldrev, newrev, refname)
+      #  if hooks_dict["pre-receive-hook-merge-markers"]: # enable hook
+      #      prevent_merge_markers(oldrev, newrev, refname)
         # prevent large files
         if hooks_dict["pre-receive-hook-large-files"]:  # enable hook
             prevent_large_files(oldrev, newrev, refname)
