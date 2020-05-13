@@ -10,6 +10,7 @@ clean.
 from __future__ import print_function
 import subprocess
 import sys
+import re
 
 
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
@@ -17,15 +18,13 @@ ZERO_COMMIT = "0000000000000000000000000000000000000000"
 
 def git_diff_files_with_conflicts(oldrev, newrev):
     """Get list of files in diff."""
-    files_modified = subprocess.check_output(['git',
-                                              'diff',
-                                              '--name-only',
-                                              '-G"<<<<<<<|=======|>>>>>>>"',
-                                              oldrev + ".." + newrev])
-    ## Exclude markdown files, because they can contain, title headers
-    ## which have the pattern "=======", which show title
-    files = [f for f in files_modified.splitlines() if ".md" not in f]
-    return files
+    diff = subprocess.check_output(['git',
+                                    'diff',
+                                    oldrev + ".." + newrev])
+    pattern = re.compile(r"<<<<<<< HEAD")
+    # Search for pattern in diff
+    conflicts = pattern.search(diff.decode())
+    return conflicts
 
 
 def prevent_merge_markers(oldrev, newrev, refname):
@@ -34,10 +33,8 @@ def prevent_merge_markers(oldrev, newrev, refname):
     This function prevents merge markers in commits.
     """
     conflicts = git_diff_files_with_conflicts(oldrev, newrev)
-    # If number of files with conflicts is > 0
+    # If there are conflicts in string
     if conflicts:
-        message = ("Error: You cannot commit without resolving merge conflicts.\n"
-                   "Unresolved merge conflicts in these files: \n" +
-                   ", ".join(conflicts))
+        message = ("Error: You cannot commit without resolving merge conflicts. \n") + conflicts.string
         sys.exit(message)
     return
