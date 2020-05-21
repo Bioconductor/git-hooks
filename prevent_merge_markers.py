@@ -23,7 +23,7 @@ def git_diff_files_with_conflicts(oldrev, newrev):
                                     oldrev + ".." + newrev])
     pattern = re.compile(r"<<<<<<< HEAD")
     # Search for pattern in diff
-    conflicts = pattern.search(diff.decode('UTF-8')
+    conflicts = pattern.search(diff.decode('UTF-8'))
     return conflicts
 
 
