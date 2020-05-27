@@ -78,7 +78,8 @@ def prevent_merge_markers(oldrev, newrev, refname):
     conflicts = pattern_match(diff)
     # If there are conflicts in string
     if conflicts:
-        message = "Error: You cannot push without resolving merge conflicts. \n" \
-            + conflicts.string
+        message = "Error: You cannot push without resolving merge" + \
+            " conflicts. Please check the commits in your push for" + \
+            " conflict markers like '<<<<<<<', '========', '>>>>>>>'. "
         sys.exit(message)
     return
