@@ -72,6 +72,14 @@ def prevent_merge_markers(oldrev, newrev, refname):
 
     This function prevents merge markers in commits.
     """
+    if oldrev == ZERO_COMMIT:
+        ## https://stackoverflow.com/questions/40883798/how-to-get-git-diff-of-the-first-commit
+        ## 4b825dc642cb6eb9a060e54bf8d69288fbee4904 is the
+        ## id of the "empty tree" in Git and it's always
+        ## available in every repository.
+        oldrev = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+
+    # Get diff
     diff = subprocess.check_output(['git',
                                     'diff',
                                     oldrev + ".." + newrev])
