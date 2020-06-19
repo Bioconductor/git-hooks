@@ -11,9 +11,13 @@ import subprocess
 import sys
 import re
 
-
+# Global variables used by pre-recieve hook
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
+ERROR_MSG = """Error: Illegal version bump from '%s' to '%s'.
 
+Check http://bioconductor.org/developers/how-to/version-numbering/
+for details.
+"""
 
 def eprint(*args, **kwargs):
     """Helper function to print to std err."""
@@ -22,9 +26,7 @@ def eprint(*args, **kwargs):
 
 def throw_error(prev_version, new_version):
     """Throw error message for every version bump failure."""
-    message = ("Error: Illegal version bump from '%s' to '%s'. Check \n"
-               "http://bioconductor.org/developers/how-to/version-numbering/ \n"
-               "for details" % (prev_version, new_version))
+    message = (ERROR_MSG % (prev_version, new_version))
     sys.exit(message)
     return
 

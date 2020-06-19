@@ -1,15 +1,21 @@
 #!/usr/bin/env python
+"""Pre-receive hook to check duplicate commits.
+
+This hooks checks to see if there are any duplicate commits generated
+because of the SVN to GIT transition of packages. It also checks to
+see if there are duplicate commits generated because of bad resolution of
+merges between remotes.
+"""
 
 import subprocess
 import sys
 import re
 
 # Global variables used by pre-recieve hook
-
 GIT_COMMIT_LIST_LENGTH = "30"
 SVN_COMMIT_REGEX = re.compile(".*git-svn-id: .*@([0-9]{6})")
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
-ERROR_DUPLICATE_COMMITS = """Error: duplicate commits.
+ERROR_MSG = """Error: duplicate commits.
 
 There are duplicate commits in your commit history, These cannot be
 pushed to the Bioconductor git server. Please make sure that this is
@@ -52,7 +58,7 @@ def prevent_duplicate_commits(oldrev, newrev, refname):
     commit_list = [item for item in commit_list if len(item)>0]
 
     # For each of the first GIT_COMMIT_LIST_LENGTH pairs, check diff
-    for i in xrange(len(commit_list) - 1):
+    for i in range(len(commit_list) - 1):
         first = commit_list[i]
         second = commit_list[i+1]
 
@@ -63,6 +69,6 @@ def prevent_duplicate_commits(oldrev, newrev, refname):
             # If the diff of two commits is empty, means they are the same.
             # i.e duplicate
             if not diff:
-                print(ERROR_DUPLICATE_COMMITS % (first, second))
+                print(ERROR_MSG % (first, second))
                 sys.exit(1)
     return

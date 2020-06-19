@@ -1,7 +1,13 @@
+#!/usr/bin/env python
+"""Pre-receive hook to check if there are large files in the packages.
+
+This hook prevents files which are larger than 5MB in size.
+"""
+
 import subprocess
 import sys
-# Global variables used by pre-recieve hook
 
+# Global variables used by pre-recieve hook
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
 MAXSIZE = int(5000000)  # 5MB limit on file size
 ERROR_MSG = """Error: file larger than %.0f Mb.
@@ -26,7 +32,8 @@ def prevent_large_files(oldrev, newrev, refname):
             oldrev = "HEAD"
 
     list_files = subprocess.check_output(["git", "diff",
-                                          "--name-only", "--diff-filter=ACMRT",
+                                          "--name-only",
+                                          "--diff-filter=ACMRT",
                                           oldrev + ".." + newrev])
     for fl in list_files.splitlines():
 

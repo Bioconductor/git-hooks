@@ -12,9 +12,15 @@ from __future__ import print_function
 import subprocess
 import sys
 import re
+import os
 
-
+# Global variables used by pre-recieve hook
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
+ERROR_MSG = """Error: You cannot push without resolving merge conflicts.
+
+Please check the files in the commit pushed to the git-server
+for merge conflict markers like '<<<<<<<', '========', '>>>>>>>'.
+"""
 
 
 ## This code is DOES NOT RUN, it is only for testing
@@ -27,6 +33,8 @@ def search(rootdir):
     Output: list of all files
     """
     l = []
+    # Walk the path in the root directory.
+    # 'dirs' is unused as we just need the root and file
     for root, dirs, files in os.walk(rootdir):
         for filename in files:
             filepath = os.path.join(root, filename)
@@ -86,8 +94,5 @@ def prevent_merge_markers(oldrev, newrev, refname):
     conflicts = pattern_match(diff)
     # If there are conflicts in string
     if conflicts:
-        message = "Error: You cannot push without resolving merge" + \
-            " conflicts. Please check the commits in your push for" + \
-            " conflict markers like '<<<<<<<', '========', '>>>>>>>'. "
-        sys.exit(message)
+        sys.exit(ERROR_MSG)
     return
