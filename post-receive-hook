@@ -1,27 +1,36 @@
 #!/usr/bin/env python
 
+"""
+Enable post receive hook for Bioconductor packages for RSS feeds.
+"""
+
 import fileinput
-from rss_feed import rss_feed
-from xml.etree.ElementTree import parse, fromstring
+import logging
 import subprocess
 import fcntl
 import sys
-import logging
+from xml.etree.ElementTree import parse, fromstring
+from rss_feed import rss_feed
 logging.basicConfig(filename='/tmp/post-recieve.log', level=logging.DEBUG)
 
+# Global variables used by post-recieve hook
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
 BASE_PATH = "/home/git/rss/"
 
 
-def indent(elem, level=0):
+def indent_xml(elem, level=0):
+    """
+    Recursive function to indent xml entry in RSS feed.
+    """
     i = "\n" + level*"  "
     if len(elem):
         if not elem.text or not elem.text.strip():
             elem.text = i + "  "
         if not elem.tail or not elem.tail.strip():
             elem.tail = i
+        # Recurse (aka leap of faith)
         for elem in elem:
-            indent(elem, level+1)
+            indent_xml(elem, level+1)
         if not elem.tail or not elem.tail.strip():
             elem.tail = i
     else:
@@ -30,6 +39,9 @@ def indent(elem, level=0):
 
 
 def write_and_limit_feed(entry_list, length, feed):
+    """
+    Write a new entry to the RSS feed.
+    """
     doc = parse(feed)
     root = doc.getroot()
 
@@ -45,18 +57,21 @@ def write_and_limit_feed(entry_list, length, feed):
         extra_items = items[length:]
         for extra_item in extra_items:
             channel_root.remove(extra_item)
-    indent(channel_root)
+    indent_xml(channel_root)
     feed.seek(0)
     feed.truncate()
+    # Write feed
     doc.write(feed)
     feed.write("\n")
     feed.flush()
     return feed
 
 
+# This is only run when changed to 'True'
+# It is used for local testing
 if False:
     fh = "/tmp/gitlog.xml"
-    feed = open(fh, "r+")
+    test_feed = open(fh, "r+")
     refname = None
     revs = subprocess.check_output([
         "git", "log", "-2", "--format=%H"
@@ -75,9 +90,9 @@ on't import "$<-" method from the IRanges package (the IRanges package
       <pubDate>2017-12-08 17:26:18</pubDate>
     </item>
     """
-    entry = fromstring(sample_entry)
-    write_and_limit_feed([entry], 5, fh)
-    fh.close()
+    rss_entry = fromstring(sample_entry)
+    write_and_limit_feed([rss_entry], 5, fh)
+    test_feed.close()
     sys.exit(0)
 
 
@@ -99,28 +114,32 @@ if __name__ == "__main__":
         oldrev, newrev, refname = [item.strip() for item in std_input]
         # Check for zero commit, check branch deletions
         # also, avoid new package additions
-        if (oldrev == ZERO_COMMIT or newrev == ZERO_COMMIT):
+        if ZERO_COMMIT in (oldrev, newrev):
             continue
         # Split feed into correct files
         try:
-            if ("RELEASE" in refname):
+            if "RELEASE" in refname:
                 # RSS-feed post-receive hook
                 entry = rss_feed(oldrev, newrev, refname, length)
                 write_and_limit_feed(entry, length, feed_release)
             else:
                 entry = rss_feed(oldrev, newrev, refname, length)
                 write_and_limit_feed(entry, length, feed)
-        except Exception as e:
+        except Exception as err:
             print("Note: failed to update RSS feed; git repository updated successfully.")
-            logging.error(e)
-    cmd = ['scp', 'gitlog.xml', 'gitlog.release.xml',
-           'biocadmin@staging.bioconductor.org:/home/biocadmin/bioc-test-web/bioconductor.org/assets/developers/rss-feeds/.']
+            logging.error(err)
+
+    # Url for sending the RSS feed
+    url = 'biocadmin@staging.bioconductor.org' + \
+        ':/home/biocadmin/bioc-test-web/bioconductor.org' + \
+        '/assets/developers/rss-feeds/.'
+    # Run subprocess command
+    cmd = ['scp', 'gitlog.xml', 'gitlog.release.xml', url]
     subprocess.check_call(cmd, cwd=BASE_PATH)
-    
+
     # Release the lock
     fcntl.lockf(feed, fcntl.LOCK_UN)
     feed.close()
     feed_release.close()
 
     logging.info("Exit after removing locks")
-
