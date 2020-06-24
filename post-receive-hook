@@ -18,7 +18,7 @@ ZERO_COMMIT = "0000000000000000000000000000000000000000"
 BASE_PATH = "/home/git/rss/"
 
 
-if __name__ == "__main__":
+def apply_hooks():
     # Path to feed.xml
     fpath = BASE_PATH + "gitlog.xml"
     fpath_release = BASE_PATH + "gitlog.release.xml"
@@ -62,3 +62,7 @@ if __name__ == "__main__":
     fcntl.lockf(feed, fcntl.LOCK_UN)
     feed.close()
     feed_release.close()
+    return
+
+if __name__ == "__main__":
+    apply_hooks()

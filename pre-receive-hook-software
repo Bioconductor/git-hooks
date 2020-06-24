@@ -11,32 +11,12 @@ from prevent_large_files import prevent_large_files
 from prevent_duplicate_commits import prevent_duplicate_commits
 from prevent_bad_version_numbers import prevent_bad_version_numbers
 from prevent_merge_markers import prevent_merge_markers
+from git_hook_utilities import get_hooks_conf
 
 # Global variables used by pre-recieve hook for software packages
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
 HOOKS_CONF = "file:///home/git/repositories/admin/hook_maintainer.git"
 LOCAL_HOOKS_CONF = "file:////Users/ni41435_ca/Documents/hook_maintainer.git"
-
-
-def get_hooks_conf():
-    """This function does a simple 'git archive' clone process of
-    hooks.conf.
-
-    It clones the file in the /tmp directory. This function ignores
-    the '#' characters in the file.
-
-    """
-    # NOTE: Change to HOOKS_CONF to LOCAL_HOOKS_CONF when testing
-    cmd = "git archive --remote=" + HOOKS_CONF + " HEAD hooks.conf | tar -x"
-    subprocess.check_output(cmd, shell=True, cwd="/tmp")
-    if path.exists("/tmp/hooks.conf"):
-        with open("/tmp/hooks.conf") as f:
-            txt = f.read()
-        txt = txt.splitlines()
-        # Ignore '#' in the file
-        conf = "\n".join([line for line in txt
-                          if not line.startswith("#")])
-    return conf
 
 
 def read_bioc_conf(conf):
