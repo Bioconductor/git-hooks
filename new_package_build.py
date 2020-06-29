@@ -23,48 +23,44 @@ from prevent_bad_version_numbers import throw_error
 
 
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
-ERROR_MSG = """Error: Illegal version bump from '%s' to '%s'.
 
-For new packages in the build report, the version number should
-always be in the form 'major.minor.patch', where 'majoy.minor'
-should always be '0.99'. Only increment 'patch' number.
+# ERROR_MSG = """Error: Illegal version bump from '%s' to '%s'.
 
-If you want a build to start, increment the 'patch' number in your
-version.
+# For new packages in the build report, the version number should
+# always be in the form 'major.minor.patch', where 'major.minor'
+# should always be '0.99'. Only increment 'patch' number.
 
-Check http://bioconductor.org/developers/how-to/version-numbering/
-for details.
-"""
+# If you want a build to start, increment the 'patch' number in your
+# version.
 
-def check_version_bump_new_package(prev_version, new_version):
+# Check http://bioconductor.org/developers/how-to/version-numbering/
+# for details.
+# """
+
+API_ENDPOINT = 'https://httpbin.org/post'
+
+def version_bumped(prev_version, new_version):
     """Check version in master branch."""
-    # Check format of version
-    prev_version, new_version = check_version_format(prev_version, new_version)
     x_0, y_0, z_0 = map(int, prev_version.split("."))
     x_1, y_1, z_1 = map(int, new_version.split("."))
-    # Check if a new package,
-    # if new, package should have 0.99.z as version number
-    if x_1 != 0 and x_0 != 0 and y_1 != 99 and y_0 != 99:
-        throw_error(prev_version, new_version)
-    if not z_1 >= z_0:
-        throw_error(prev_version, new_version)
-    return
+    return z_0 != z_1
 
 
 def trigger_build(newrev):
     """Trigger build on SPB by sending POST request.
     """
     pkgname = path.basename(getcwd()).replace(".git", "")
-    build_info = {pkgname: newrev}
+    build_info = {"pkgname": pkgname, "commit_id": newrev}
     try:
-        response = post('https://httpbin.org/post', data=build_info)
+        response = post(API_ENDPOINT, data=build_info)
         response.raise_for_status()
     except HTTPError as err:
         # Whoops it wasn't a 200
-        msg = "Error: please bump the version again. \n" + \
+        ## API_ENDPOINT will provide error message response.error()
+        msg = "Error: resolve problem and please bump the version again. \n" + \
             "The build did not start as expected. \n"
         print(msg, str(err))
-    return response.status_code
+    return
 
 
 def new_package_build(oldrev, newrev, refname):
@@ -74,9 +70,9 @@ def new_package_build(oldrev, newrev, refname):
     a POST request to single package builder API endpoint.
     """
     # new package build should only happen on master branch
-    assert refname == "master"
     if oldrev == ZERO_COMMIT:
         oldrev = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+
     files_modified = git_diff_files(oldrev, newrev)
 
     for fname in files_modified:
@@ -85,7 +81,6 @@ def new_package_build(oldrev, newrev, refname):
             prev_version, new_version = get_version_bump(diff)
             if (prev_version is None) and (new_version is None):
                 continue
-            check_version_bump_new_package(prev_version, new_version)
-            trigger_build(newrev)
-            print("New build is initiated with commit: " + newrev)
+            if version_bumped(prev_version, new_version):
+                trigger_build(newrev)
     return

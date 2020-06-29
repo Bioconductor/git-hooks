@@ -6,6 +6,9 @@ from xml.etree.ElementTree import parse, fromstring
 import logging
 
 
+# Global variables used by post-recieve hook
+ZERO_COMMIT = "0000000000000000000000000000000000000000"
+BASE_PATH = "/home/git/rss/"
 ENTRY="""
     <item>
       <title>%s</title>
@@ -135,3 +138,47 @@ on't import "$<-" method from the IRanges package (the IRanges package
     write_and_limit_feed([rss_entry], 5, fh)
     test_feed.close()
     sys.exit(0)
+
+
+def write_rss_feed(oldrev, newrev, refname, length = 499):
+    """RSS feed hook.
+
+    """
+    # Path to feed.xml
+    fpath = BASE_PATH + "gitlog.xml"
+    fpath_release = BASE_PATH + "gitlog.release.xml"
+
+    # Run function for RSS feed
+    feed = open(fpath, "r+")
+    feed_release = open(fpath_release, 'r+')
+
+    # Obtain a lock
+    fcntl.lockf(feed, fcntl.LOCK_EX)
+
+    # Split feed into correct files
+    try:
+        if "RELEASE" in refname:
+        # RSS-feed post-receive hook
+            entry = rss_feed(oldrev, newrev, refname, length)
+            write_and_limit_feed(entry, length, feed_release)
+        else:
+            entry = rss_feed(oldrev, newrev, refname, length)
+            write_and_limit_feed(entry, length, feed)
+        except Exception as err:
+            print("Note: failed to update RSS feed;", + \
+                  "git repository updated successfully.")
+
+    # Url for sending the RSS feed
+    url = 'biocadmin@staging.bioconductor.org' + \
+        ':/home/biocadmin/bioc-test-web/bioconductor.org' + \
+        '/assets/developers/rss-feeds/.'
+    # Run subprocess command
+    cmd = ['scp', 'gitlog.xml', 'gitlog.release.xml', url]
+    subprocess.check_call(cmd, cwd=BASE_PATH)
+
+    # Release the lock
+    fcntl.lockf(feed, fcntl.LOCK_UN)
+    feed.close()
+    feed_release.close()
+    return
+

@@ -121,6 +121,7 @@ def check_version_in_master(prev_version, new_version):
         throw_error(prev_version, new_version)
     return
 
+
 def check_version_bump(prev_version, new_version, refname):
     """Check the version bump for legality."""
     # Check format of version

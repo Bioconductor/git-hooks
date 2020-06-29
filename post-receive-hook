@@ -8,28 +8,15 @@ import fileinput
 import subprocess
 import fcntl
 import sys
-from rss_feed import rss_feed
-from rss_feed import indent_xml
-from rss_feed import write_and_limit_feed
+from rss_feed import write_rss_feed
+from new_package_build import new_package_build
+
 
 # Global variables used by post-recieve hook
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
-BASE_PATH = "/home/git/rss/"
 
 
 def apply_hooks():
-    # Path to feed.xml
-    fpath = BASE_PATH + "gitlog.xml"
-    fpath_release = BASE_PATH + "gitlog.release.xml"
-    length = 499
-
-    # Run function for RSS feed
-    feed = open(fpath, "r+")
-    feed_release = open(fpath_release, 'r+')
-
-    # Obtain a lock
-    fcntl.lockf(feed, fcntl.LOCK_EX)
-
     for line in fileinput.input():
         std_input = line.split(" ")
         oldrev, newrev, refname = [item.strip() for item in std_input]
@@ -37,31 +24,14 @@ def apply_hooks():
         # also, avoid new package additions
         if ZERO_COMMIT in (oldrev, newrev):
             continue
-        # Split feed into correct files
-        try:
-            if "RELEASE" in refname:
-                # RSS-feed post-receive hook
-                entry = rss_feed(oldrev, newrev, refname, length)
-                write_and_limit_feed(entry, length, feed_release)
-            else:
-                entry = rss_feed(oldrev, newrev, refname, length)
-                write_and_limit_feed(entry, length, feed)
-        except Exception as err:
-            print("Note: failed to update RSS feed; git repository updated successfully.")
-
-    # Url for sending the RSS feed
-    url = 'biocadmin@staging.bioconductor.org' + \
-        ':/home/biocadmin/bioc-test-web/bioconductor.org' + \
-        '/assets/developers/rss-feeds/.'
-    # Run subprocess command
-    cmd = ['scp', 'gitlog.xml', 'gitlog.release.xml', url]
-    subprocess.check_call(cmd, cwd=BASE_PATH)
-
-    # Release the lock
-    fcntl.lockf(feed, fcntl.LOCK_UN)
-    feed.close()
-    feed_release.close()
+        # insert new hooks here
+        new_package_build(oldrev, newrev, refname)        
+        # Pass in 'length' as an optional argument
+        # default 'length' of feed is 499
+        write_rss_feed(oldrev, newrev, refname, length = 499)
     return
 
+
 if __name__ == "__main__":
+    # post-receive hooks are applied uniformly across all packages.
     apply_hooks()
