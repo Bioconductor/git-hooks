@@ -24,9 +24,9 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def throw_error(prev_version, new_version):
+def throw_error(prev_version, new_version, error_msg):
     """Throw error message for every version bump failure."""
-    message = (ERROR_MSG % (prev_version, new_version))
+    message = (error_msg % (prev_version, new_version))
     sys.exit(message)
     return
 
@@ -78,13 +78,13 @@ def check_version_format(prev_version, new_version):
     """Check format of version."""
     regex = re.compile(r'^\d+\.\d+\.\d+$')
     if not regex.match(new_version):
-        throw_error(prev_version, new_version)
+        throw_error(prev_version, new_version, ERROR_MSG)
     try:
         x0, y0, z0 = map(int, prev_version.split("."))
         x, y, z = map(int, new_version.split("."))
     except ValueError as e:
         print('format of version number is wrong', e)
-        throw_error(prev_version, new_version)
+        throw_error(prev_version, new_version, ERROR_MSG)
     return prev_version, new_version
 
 
@@ -95,10 +95,10 @@ def check_version_in_release(prev_version, new_version):
     # x should never change, y should be even, y should not be 99 i.e
     # no major version change
     if (x != x0) or (y % 2 != 0) or (y!=y0):
-        throw_error(prev_version, new_version)
+        throw_error(prev_version, new_version, ERROR_MSG)
     # z should be incremented
     if not z - z0 >= 0:
-        throw_error(prev_version, new_version)
+        throw_error(prev_version, new_version, ERROR_MSG)
     return
 
 
@@ -108,17 +108,17 @@ def check_version_in_master(prev_version, new_version):
     x, y, z = map(int, new_version.split("."))
     # x should never change
     if x != x0:
-        throw_error(prev_version, new_version)
+        throw_error(prev_version, new_version, ERROR_MSG)
     # y should be odd
     if y % 2 == 0:
-        throw_error(prev_version, new_version)
+        throw_error(prev_version, new_version, ERROR_MSG)
     # y should be the same, and can be 99
     if (y != y0) and (y != 99):
-        throw_error(prev_version, new_version)
+        throw_error(prev_version, new_version, ERROR_MSG)
     # z should be incremented and cannot be 99
     # to indicate major version change
     if not (z - z0 >= 0) and (y != 99):
-        throw_error(prev_version, new_version)
+        throw_error(prev_version, new_version, ERROR_MSG)
     return
 
 

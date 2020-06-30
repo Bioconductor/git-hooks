@@ -9,7 +9,7 @@ import subprocess
 import fcntl
 import sys
 from rss_feed import write_rss_feed
-from new_package_build import new_package_build
+from new_package_build import package_start_build
 
 
 # Global variables used by post-recieve hook
@@ -17,6 +17,10 @@ ZERO_COMMIT = "0000000000000000000000000000000000000000"
 
 
 def apply_hooks():
+    """Apply hooks for post-receive hooks.
+
+    Hooks are applied in order.
+    """
     for line in fileinput.input():
         std_input = line.split(" ")
         oldrev, newrev, refname = [item.strip() for item in std_input]
@@ -25,7 +29,7 @@ def apply_hooks():
         if ZERO_COMMIT in (oldrev, newrev):
             continue
         # insert new hooks here
-        new_package_build(oldrev, newrev, refname)        
+        package_start_build(oldrev, newrev, refname)
         # Pass in 'length' as an optional argument
         # default 'length' of feed is 499
         write_rss_feed(oldrev, newrev, refname, length = 499)

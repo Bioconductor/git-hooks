@@ -21,29 +21,16 @@ from prevent_bad_version_numbers import get_version_bump
 from prevent_bad_version_numbers import check_version_format
 from prevent_bad_version_numbers import throw_error
 
-
+# Global variables for this file
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
+API_ENDPOINT = "http://issues.bioconductor.org/start_build"
 
-# ERROR_MSG = """Error: Illegal version bump from '%s' to '%s'.
-
-# For new packages in the build report, the version number should
-# always be in the form 'major.minor.patch', where 'major.minor'
-# should always be '0.99'. Only increment 'patch' number.
-
-# If you want a build to start, increment the 'patch' number in your
-# version.
-
-# Check http://bioconductor.org/developers/how-to/version-numbering/
-# for details.
-# """
-
-API_ENDPOINT = 'https://httpbin.org/post'
 
 def version_bumped(prev_version, new_version):
     """Check version in master branch."""
-    x_0, y_0, z_0 = map(int, prev_version.split("."))
-    x_1, y_1, z_1 = map(int, new_version.split("."))
-    return z_0 != z_1
+    x0, y0, z0 = map(int, prev_version.split("."))
+    x, y, z = map(int, new_version.split("."))
+    return z0 != z
 
 
 def trigger_build(newrev):
@@ -56,14 +43,14 @@ def trigger_build(newrev):
         response.raise_for_status()
     except HTTPError as err:
         # Whoops it wasn't a 200
-        ## API_ENDPOINT will provide error message response.error()
+        # API_ENDPOINT will provide error message response.error()
         msg = "Error: resolve problem and please bump the version again. \n" + \
             "The build did not start as expected. \n"
         print(msg, str(err))
     return
 
 
-def new_package_build(oldrev, newrev, refname):
+def package_start_build(oldrev, newrev, refname):
     """Trigger build based on version bump in new package.
 
     The function takes in the standard arguments for a hook and sends
@@ -81,6 +68,8 @@ def new_package_build(oldrev, newrev, refname):
             prev_version, new_version = get_version_bump(diff)
             if (prev_version is None) and (new_version is None):
                 continue
+            # If version has been bumped
             if version_bumped(prev_version, new_version):
+                # start build
                 trigger_build(newrev)
     return
