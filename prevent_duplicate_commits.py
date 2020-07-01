@@ -7,9 +7,9 @@ see if there are duplicate commits generated because of bad resolution of
 merges between remotes.
 """
 
+import re
 import subprocess
 import sys
-import re
 
 # Global variables used by pre-recieve hook
 GIT_COMMIT_LIST_LENGTH = "30"
@@ -37,10 +37,11 @@ Use
 to see body of commits.
 """
 
+
 def get_svn_revision(commit):
-    body = subprocess.check_output([ "git", "show", "--format=%b", commit ])
+    body = subprocess.check_output(["git", "show", "--format=%b", commit])
     revision = SVN_COMMIT_REGEX.match(body)
-    if revision != None:
+    if revision is not None:
         revision = revision.group(1)
     return revision
 
@@ -55,12 +56,12 @@ def prevent_duplicate_commits(oldrev, newrev, refname):
         print("Exception: %s" % e)
         pass
     commit_list = commit_list.split("\n")
-    commit_list = [item for item in commit_list if len(item)>0]
+    commit_list = [item for item in commit_list if len(item) > 0]
 
     # For each of the first GIT_COMMIT_LIST_LENGTH pairs, check diff
     for i in range(len(commit_list) - 1):
         first = commit_list[i]
-        second = commit_list[i+1]
+        second = commit_list[i + 1]
 
         rev1 = get_svn_revision(first)
         rev2 = get_svn_revision(second)

@@ -9,10 +9,12 @@ clean.
 """
 
 from __future__ import print_function
+
+import os
+import re
 import subprocess
 import sys
-import re
-import os
+
 
 # Global variables used by pre-recieve hook
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
@@ -23,8 +25,8 @@ for merge conflict markers like '<<<<<<<', '========', '>>>>>>>'.
 """
 
 
-## This code is DOES NOT RUN, it is only for testing
-## import os
+# This code is DOES NOT RUN, it is only for testing
+# import os
 def search(rootdir):
     """
     Test code: list all the files in a directory
@@ -42,7 +44,7 @@ def search(rootdir):
     return l
 
 
-## This code is DOES NOT RUN, it is only for testing
+# This code is DOES NOT RUN, it is only for testing
 def test_files(rootdir):
     """
     Test code: The package GlobalAncova has non standard,
@@ -81,10 +83,10 @@ def prevent_merge_markers(oldrev, newrev, refname):
     This function prevents merge markers in commits.
     """
     if oldrev == ZERO_COMMIT:
-        ## https://stackoverflow.com/questions/40883798/how-to-get-git-diff-of-the-first-commit
-        ## 4b825dc642cb6eb9a060e54bf8d69288fbee4904 is the
-        ## id of the "empty tree" in Git and it's always
-        ## available in every repository.
+        # https://stackoverflow.com/questions/40883798/how-to-get-git-diff-of-the-first-commit
+        # 4b825dc642cb6eb9a060e54bf8d69288fbee4904 is the
+        # id of the "empty tree" in Git and it's always
+        # available in every repository.
         oldrev = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 
     # Get diff

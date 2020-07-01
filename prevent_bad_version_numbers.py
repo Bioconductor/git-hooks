@@ -7,9 +7,10 @@ http://bioconductor.org/developers/how-to/version-numbering/.
 """
 
 from __future__ import print_function
+
+import re
 import subprocess
 import sys
-import re
 
 # Global variables used by pre-recieve hook
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
@@ -18,6 +19,7 @@ ERROR_MSG = """Error: Illegal version bump from '%s' to '%s'.
 Check http://bioconductor.org/developers/how-to/version-numbering/
 for details.
 """
+
 
 def eprint(*args, **kwargs):
     """Helper function to print to std err."""
@@ -65,10 +67,10 @@ def get_version_bump(diff):
     new_version = [line.replace("+Version:", "")
                    for line in diff
                    if line.startswith("+Version")]
-    ## If versions are equal, no version change
+    # If versions are equal, no version change
     if prev_version == new_version:
         return None, None
-    ## No change in DESCRIPTION file from new package push
+    # No change in DESCRIPTION file from new package push
     if not prev_version or not new_version:
         return None, None
     return prev_version[0].strip(), new_version[0].strip()
@@ -94,7 +96,7 @@ def check_version_in_release(prev_version, new_version):
     x, y, z = map(int, new_version.split("."))
     # x should never change, y should be even, y should not be 99 i.e
     # no major version change
-    if (x != x0) or (y % 2 != 0) or (y!=y0):
+    if (x != x0) or (y % 2 != 0) or (y != y0):
         throw_error(prev_version, new_version, ERROR_MSG)
     # z should be incremented
     if not z - z0 >= 0:
@@ -140,10 +142,10 @@ def prevent_bad_version_numbers(oldrev, newrev, refname):
     This function acts as the wrapper for all the helper functions.
     """
     if oldrev == ZERO_COMMIT:
-        ## https://stackoverflow.com/questions/40883798/how-to-get-git-diff-of-the-first-commit
-        ## 4b825dc642cb6eb9a060e54bf8d69288fbee4904 is the
-        ## id of the "empty tree" in Git and it's always
-        ## available in every repository.
+        # https://stackoverflow.com/questions/40883798/how-to-get-git-diff-of-the-first-commit
+        # 4b825dc642cb6eb9a060e54bf8d69288fbee4904 is the
+        # id of the "empty tree" in Git and it's always
+        # available in every repository.
         oldrev = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
     files_modified = git_diff_files(oldrev, newrev)
     for fname in files_modified:

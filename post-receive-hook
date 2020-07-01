@@ -5,7 +5,6 @@ Enable post receive hook for Bioconductor packages for RSS feeds.
 """
 
 import fileinput
-import sys
 from new_package_build import package_start_build
 from rss_feed import write_rss_feed
 
@@ -29,7 +28,7 @@ def apply_hooks():
         package_start_build(oldrev, newrev, refname)
         # Pass in 'length' as an optional argument
         # default 'length' of feed is 499
-        write_rss_feed(oldrev, newrev, refname, length = 499)
+        write_rss_feed(oldrev, newrev, refname, length=499)
     return
 
 

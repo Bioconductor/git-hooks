@@ -5,13 +5,12 @@ Enable pre-receive git hooks to data-experiment and workflow
 packages in Bioconductor.
 """
 
-
-import subprocess
-from os import path, getcwd
 import fileinput
-from prevent_duplicate_commits import prevent_duplicate_commits
-from prevent_bad_version_numbers import prevent_bad_version_numbers
+from os import getcwd, path
 from git_hook_utilities import get_hooks_conf
+from prevent_bad_version_numbers import prevent_bad_version_numbers
+from prevent_duplicate_commits import prevent_duplicate_commits
+
 
 # Global variables used by pre-recieve hook data-experiment and workflow
 ZERO_COMMIT = "0000000000000000000000000000000000000000"

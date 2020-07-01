@@ -1,17 +1,19 @@
-import subprocess
+
 import fcntl
-import datetime
-from os.path import basename, abspath
-from xml.etree.ElementTree import parse, fromstring
-from git_hook_utilities import indent_xml
 import logging
+import subprocess
 import sys
+from os.path import abspath, basename
+from xml.etree.ElementTree import fromstring, parse
+from git_hook_utilities import indent_xml
+
 logging.basicConfig(filename='/tmp/post-recieve.log', level=logging.DEBUG)
+
 
 # Global variables used by post-recieve hook
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
 BASE_PATH = "/home/git/rss/"
-ENTRY="""
+ENTRY = """
     <item>
       <title>%s</title>
       <link>https://bioconductor.org/packages/%s/</link>
@@ -44,7 +46,7 @@ def rss_feed(oldrev, newrev, refname, length):
         # Reverse if there are multiple commits
         for commit in latest_commit[::-1]:
             commit_id, author, email, timestamp = commit.split("|")
-            commit_msg = subprocess.check_output(["git", "log" ,
+            commit_msg = subprocess.check_output(["git", "log",
                                                   "--pretty=format:%B",
                                                   "-n", "1", commit_id])
             # link for correct branch
@@ -93,7 +95,7 @@ def write_and_limit_feed(entry_list, length, feed):
     return feed
 
 
-def write_rss_feed(oldrev, newrev, refname, length = 499):
+def write_rss_feed(oldrev, newrev, refname, length=499):
     """RSS feed hook.
 
     """
@@ -110,15 +112,14 @@ def write_rss_feed(oldrev, newrev, refname, length = 499):
 
     # Split feed into correct files
     try:
-        if "RELEASE" in refname:
-        # RSS-feed post-receive hook
+        if "RELEASE" in refname:  # RSS-feed post-receive hook
             entry = rss_feed(oldrev, newrev, refname, length)
             write_and_limit_feed(entry, length, feed_release)
         else:
             entry = rss_feed(oldrev, newrev, refname, length)
             write_and_limit_feed(entry, length, feed)
     except Exception as err:
-        print("Note: failed to update RSS feed;" + \
+        print("Note: failed to update RSS feed;" +
               "git repository updated successfully.")
         logging.error(err)
     # Url for sending the RSS feed

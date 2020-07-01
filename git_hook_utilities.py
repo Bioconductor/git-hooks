@@ -15,7 +15,7 @@ def indent_xml(elem, level=0):
     """
     Recursive function to indent xml entry in RSS feed.
     """
-    i = "\n" + level*"  "
+    i = "\n" + level * "  "
     if len(elem):
         if not elem.text or not elem.text.strip():
             elem.text = i + "  "
@@ -23,7 +23,7 @@ def indent_xml(elem, level=0):
             elem.tail = i
         # Recurse (aka leap of faith)
         for elem in elem:
-            indent_xml(elem, level+1)
+            indent_xml(elem, level + 1)
         if not elem.tail or not elem.tail.strip():
             elem.tail = i
     else:
