@@ -12,6 +12,9 @@ This repository acts as a submodule within the Bioconductor git server which man
 
 The hooks are written in Python. They currently check each package for,
 
+
+### Pre-receive hooks
+
 1. Bad version numbers: prevent_bad_version_numbers.py
 
 2. Duplicate commits: prevent_duplicate_commits.py
@@ -20,7 +23,11 @@ The hooks are written in Python. They currently check each package for,
 
 4. Large files: prevent_large_files.py
 
-5. RSS feed: rss_feed.py
+### Post-receive hooks
+
+1. New package build: new_package_build.py
+
+1. RSS feed: rss_feed.py
 
 ## Contact information
 
