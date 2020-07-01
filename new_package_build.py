@@ -23,7 +23,15 @@ from prevent_bad_version_numbers import throw_error
 
 # Global variables for this file
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
-API_ENDPOINT = "http://issues.bioconductor.org/start_build"
+API_ENDPOINT = "https://issues.bioconductor.org/start_build"
+ERROR_MSG = """Error: Please bump the version again and push.
+
+The build did not start as expected. If the issue persists,
+please reach out at bioc-devel@r-project.org or post on the
+Github issue where your package is being reviewed.
+
+%s
+"""
 
 
 def version_bumped(prev_version, new_version):
@@ -39,14 +47,12 @@ def trigger_build(newrev):
     pkgname = path.basename(getcwd()).replace(".git", "")
     build_info = {"pkgname": pkgname, "commit_id": newrev}
     try:
-        response = post(API_ENDPOINT, data=build_info)
+        response = post(API_ENDPOINT, json=build_info)
         response.raise_for_status()
     except HTTPError as err:
         # Whoops it wasn't a 200
         # API_ENDPOINT will provide error message response.error()
-        msg = "Error: resolve problem and please bump the version again. \n" + \
-            "The build did not start as expected. \n"
-        print(msg, str(err))
+        print(ERROR_MSG % str(err))
     return
 
 

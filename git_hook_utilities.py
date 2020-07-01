@@ -4,6 +4,33 @@
 Bioconductor hook utilities
 """
 
+import subprocess
+from os import path
+
+HOOKS_CONF = "file:///home/git/repositories/admin/hook_maintainer.git"
+LOCAL_HOOKS_CONF = "file:////Users/ni41435_lca/Documents/bioc/hook_maintainer.git"
+
+
+def indent_xml(elem, level=0):
+    """
+    Recursive function to indent xml entry in RSS feed.
+    """
+    i = "\n" + level*"  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        # Recurse (aka leap of faith)
+        for elem in elem:
+            indent_xml(elem, level+1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
+
+
 def get_hooks_conf():
     """This function does a simple 'git archive' clone process of
     hooks.conf.

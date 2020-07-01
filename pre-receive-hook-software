@@ -15,8 +15,6 @@ from git_hook_utilities import get_hooks_conf
 
 # Global variables used by pre-recieve hook for software packages
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
-HOOKS_CONF = "file:///home/git/repositories/admin/hook_maintainer.git"
-LOCAL_HOOKS_CONF = "file:////Users/ni41435_ca/Documents/hook_maintainer.git"
 
 
 def read_bioc_conf(conf):

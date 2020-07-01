@@ -1,8 +1,11 @@
 import subprocess
+import fcntl
 import datetime
 from os.path import basename, abspath
 from xml.etree.ElementTree import parse, fromstring
+from git_hook_utilities import indent_xml
 import logging
+import sys
 logging.basicConfig(filename='/tmp/post-recieve.log', level=logging.DEBUG)
 
 # Global variables used by post-recieve hook
@@ -61,26 +64,6 @@ def rss_feed(oldrev, newrev, refname, length):
     return entry_list
 
 
-def indent_xml(elem, level=0):
-    """
-    Recursive function to indent xml entry in RSS feed.
-    """
-    i = "\n" + level*"  "
-    if len(elem):
-        if not elem.text or not elem.text.strip():
-            elem.text = i + "  "
-        if not elem.tail or not elem.tail.strip():
-            elem.tail = i
-        # Recurse (aka leap of faith)
-        for elem in elem:
-            indent_xml(elem, level+1)
-        if not elem.tail or not elem.tail.strip():
-            elem.tail = i
-    else:
-        if level and (not elem.tail or not elem.tail.strip()):
-            elem.tail = i
-
-
 def write_and_limit_feed(entry_list, length, feed):
     """
     Write a new entry to the RSS feed.
@@ -134,10 +117,10 @@ def write_rss_feed(oldrev, newrev, refname, length = 499):
         else:
             entry = rss_feed(oldrev, newrev, refname, length)
             write_and_limit_feed(entry, length, feed)
-        except Exception as err:
-            print("Note: failed to update RSS feed;", + \
-                  "git repository updated successfully.")
-
+    except Exception as err:
+        print("Note: failed to update RSS feed;" + \
+              "git repository updated successfully.")
+        logging.error(err)
     # Url for sending the RSS feed
     url = 'biocadmin@staging.bioconductor.org' + \
         ':/home/biocadmin/bioc-test-web/bioconductor.org' + \

@@ -5,12 +5,9 @@ Enable post receive hook for Bioconductor packages for RSS feeds.
 """
 
 import fileinput
-import subprocess
-import fcntl
 import sys
-from rss_feed import write_rss_feed
 from new_package_build import package_start_build
-
+from rss_feed import write_rss_feed
 
 # Global variables used by post-recieve hook
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
