@@ -14,12 +14,15 @@ http://bioconductor.org/developers/how-to/version-numbering/.
 
 from os import path, getcwd
 from requests import post
+import logging
 from requests.exceptions import HTTPError
 from prevent_bad_version_numbers import git_diff
 from prevent_bad_version_numbers import git_diff_files
 from prevent_bad_version_numbers import get_version_bump
 from prevent_bad_version_numbers import check_version_format
 from prevent_bad_version_numbers import throw_error
+logging.basicConfig(filename='/tmp/new_package_build.log', level=logging.DEBUG)
+
 
 # Global variables for this file
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
@@ -49,6 +52,9 @@ def trigger_build(newrev):
     try:
         response = post(API_ENDPOINT, json=build_info)
         response.raise_for_status()
+        for key in build_info:
+            logging.DEBUG(key, build_info[key])
+        logging.DEBUG(response.content)
     except HTTPError as err:
         # Whoops it wasn't a 200
         # API_ENDPOINT will provide error message response.error()
