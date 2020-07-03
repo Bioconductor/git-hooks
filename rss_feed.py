@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+
+"""Post-receive hook for rss feeds
+
+The RSS feeds for git log. The feeds are split into RELEASE and devel
+gitlog.xml files.
+"""
 
 import fcntl
 import logging
@@ -6,8 +13,6 @@ import sys
 from os.path import abspath, basename
 from xml.etree.ElementTree import fromstring, parse
 from git_hook_utilities import indent_xml
-
-logging.basicConfig(filename='/tmp/post-recieve.log', level=logging.DEBUG)
 
 
 # Global variables used by post-recieve hook

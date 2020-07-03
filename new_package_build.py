@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 """Post-receive hook to trigger a build for a new package.
 
 This hook checks the version number in the DESCRIPTION file, and if
@@ -21,7 +20,6 @@ from prevent_bad_version_numbers import git_diff_files
 from prevent_bad_version_numbers import get_version_bump
 from prevent_bad_version_numbers import check_version_format
 from prevent_bad_version_numbers import throw_error
-logging.basicConfig(filename='/tmp/new_package_build.log', level=logging.DEBUG)
 
 
 # Global variables for this file
@@ -52,9 +50,9 @@ def trigger_build(newrev):
     try:
         response = post(API_ENDPOINT, json=build_info)
         response.raise_for_status()
-        for key in build_info:
-            logging.DEBUG(key, build_info[key])
-        logging.DEBUG(response.content)
+#        for key in build_info:
+#            logging.DEBUG(key, build_info[key])
+#        logging.DEBUG(response.content)
     except HTTPError as err:
         # Whoops it wasn't a 200
         # API_ENDPOINT will provide error message response.error()
