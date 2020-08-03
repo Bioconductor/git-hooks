@@ -9,7 +9,7 @@ import sys
 
 # Global variables used by pre-recieve hook
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
-MAXSIZE = int(5000000)  # 5MB limit on file size
+MAXSIZE = int(5242880)  # 5MB limit on file size
 ERROR_MSG = """Error: file larger than %.0f Mb.
 
     File name: '%s'
