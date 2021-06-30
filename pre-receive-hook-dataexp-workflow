@@ -52,8 +52,9 @@ def apply_hooks(hooks_dict):
     workflow.
 
     This function takes in a boolean list of arguments, one for each hook,
-    1. prevent_bad_version_numbers,
-    2. prevent_duplicate_commits in that order.
+    1. prevent_merge_markers.
+    2. prevent_bad_version_numbers,
+    3. prevent_duplicate_commits in that order.
 
     The boolean values toggle True/False to indicate which hook has to be
     applied to the package.
@@ -66,6 +67,9 @@ def apply_hooks(hooks_dict):
         # Check for zero commit, check branch deletions
         if newrev == ZERO_COMMIT:
             continue
+        # prevent merge conflict markers
+        if hooks_dict["pre-receive-hook-merge-markers"]:  # enable hook
+            prevent_merge_markers(oldrev, newrev, refname)
         # prevent duplicate commits
         if hooks_dict["pre-receive-hook-duplicate-commits"]:  # enable hook
             prevent_duplicate_commits(oldrev, newrev, refname)
