@@ -30,6 +30,8 @@ The hooks are written in Python. They currently check each package for,
 
 ## Contact information
 
-Nitesh Turaga <nitesh.turaga@roswellpark.org>
+Bioconductor Core team <maintainer@bioconductor.org>
+
+Nitesh Turaga <nitesh@ds.dfci.harvard.edu>
 
 Martin Morgan <martin.morgan@roswellpark.org>
