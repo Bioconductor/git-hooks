@@ -124,8 +124,8 @@ def write_rss_feed(oldrev, newrev, refname, length=499):
             entry = rss_feed(oldrev, newrev, refname, length)
             write_and_limit_feed(entry, length, feed)
     except Exception as err:
-        print(("Note: failed to update RSS feed;" +
-              "git repository updated successfully."))
+        print("Note: failed to update RSS feed;" +
+              "git repository updated successfully.")
         logging.error(err)
     # Url for sending the RSS feed
     url = 'biocadmin@staging.bioconductor.org' + \

@@ -56,7 +56,7 @@ def trigger_build(newrev):
     except HTTPError as err:
         # Whoops it wasn't a 200
         # API_ENDPOINT will provide error message response.error()
-        print((ERROR_MSG % str(err)))
+        print(ERROR_MSG % str(err))
     return
 
 

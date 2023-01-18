@@ -53,7 +53,7 @@ def prevent_duplicate_commits(oldrev, newrev, refname):
             "git", "rev-list", newrev, "-n", GIT_COMMIT_LIST_LENGTH
         ])
     except Exception as e:
-        print(("Exception: %s" % e))
+        print("Exception: %s" % e)
         pass
     commit_list = commit_list.split("\n")
     commit_list = [item for item in commit_list if len(item) > 0]
@@ -70,6 +70,6 @@ def prevent_duplicate_commits(oldrev, newrev, refname):
             # If the diff of two commits is empty, means they are the same.
             # i.e duplicate
             if not diff:
-                print((ERROR_MSG % (first, second)))
+                print(ERROR_MSG % (first, second))
                 sys.exit(1)
     return

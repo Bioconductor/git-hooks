@@ -46,6 +46,6 @@ def prevent_large_files(oldrev, newrev, refname):
             # Compare filesize to MAXSIZE
             mb = 1024.0 * 1024.0
             if size > MAXSIZE:
-                print((ERROR_MSG % (MAXSIZE / mb, fl, size / mb)))
+                print(ERROR_MSG % (MAXSIZE / mb, fl, size / mb))
                 sys.exit(1)
     return
