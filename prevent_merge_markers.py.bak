@@ -8,7 +8,7 @@ tries to prevent maintainers from commiting files with <<<,
 clean.
 """
 
-
+from __future__ import print_function
 
 import os
 import re

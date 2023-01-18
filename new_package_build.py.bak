@@ -37,8 +37,8 @@ Github issue where your package is being reviewed.
 
 def version_bumped(prev_version, new_version):
     """Check version in master branch."""
-    x0, y0, z0 = list(map(int, prev_version.split(".")))
-    x, y, z = list(map(int, new_version.split(".")))
+    x0, y0, z0 = map(int, prev_version.split("."))
+    x, y, z = map(int, new_version.split("."))
     return z0 != z
 
 
@@ -56,7 +56,7 @@ def trigger_build(newrev):
     except HTTPError as err:
         # Whoops it wasn't a 200
         # API_ENDPOINT will provide error message response.error()
-        print((ERROR_MSG % str(err)))
+        print(ERROR_MSG % str(err))
     return
 
 
