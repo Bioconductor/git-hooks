@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """Pre-receive hook to check for merge markers in commits.
 

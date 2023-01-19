@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Pre-receive hook to check if there are large files in the packages.
 
 This hook prevents files which are larger than 5MB in size.

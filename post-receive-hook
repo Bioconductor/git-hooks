@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Enable post receive hook for Bioconductor packages for RSS feeds.

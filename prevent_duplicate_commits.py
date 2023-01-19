@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Pre-receive hook to check duplicate commits.
 
 This hooks checks to see if there are any duplicate commits generated
