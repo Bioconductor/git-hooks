@@ -73,7 +73,7 @@ def package_start_build(oldrev, newrev, refname):
     files_modified = git_diff_files(oldrev, newrev)
 
     for fname in files_modified:
-        if "DESCRIPTION" in fname:
+        if "DESCRIPTION" in fname.decode():
             diff = git_diff(oldrev, newrev, fname)
             prev_version, new_version = get_version_bump(diff)
             if (prev_version is None) and (new_version is None):
