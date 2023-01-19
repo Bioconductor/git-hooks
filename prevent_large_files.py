@@ -39,7 +39,7 @@ def prevent_large_files(oldrev, newrev, refname):
     for fl in list_files.splitlines():
 
         size = subprocess.check_output(["git", "cat-file", "-s",
-                                        newrev + ":" + fl])
+                                        newrev + ":" + fl.decode()])
         #  Check to see if for some reason we didn't get a size
         size = int(size.strip())
         if size:

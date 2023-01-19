@@ -40,7 +40,7 @@ to see body of commits.
 
 def get_svn_revision(commit):
     body = subprocess.check_output(["git", "show", "--format=%b", commit])
-    revision = SVN_COMMIT_REGEX.match(body)
+    revision = SVN_COMMIT_REGEX.match(body.decode())
     if revision is not None:
         revision = revision.group(1)
     return revision
@@ -55,7 +55,7 @@ def prevent_duplicate_commits(oldrev, newrev, refname):
     except Exception as e:
         print("Exception: %s" % e)
         pass
-    commit_list = commit_list.split("\n")
+    commit_list = commit_list.decode().split("\n")
     commit_list = [item for item in commit_list if len(item) > 0]
 
     # For each of the first GIT_COMMIT_LIST_LENGTH pairs, check diff
