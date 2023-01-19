@@ -16,7 +16,7 @@ ERROR_MSG = """Error: file larger than %.0f Mb.
     File size: %.1f Mb
 
 Please see Biocondcutor guidelines
-https://bioconductor.org/developers/package-guidelines/
+https://contributions.bioconductor.org/general.html
 """
 
 

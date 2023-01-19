@@ -8,7 +8,7 @@ builder 'start_build' API endpoint.
 
 The version check follows the guidelines of the Bioconductor
 project. The guidelines are given at this link,
-http://bioconductor.org/developers/how-to/version-numbering/.
+http://contributions.bioconductor.org/versionnum.html.
 """
 
 from os import path, getcwd

@@ -3,7 +3,7 @@
 
 This version check follows the guidelines of the Bioconductor
 project. The guidelines are given at this link,
-http://bioconductor.org/developers/how-to/version-numbering/.
+http://contributions.bioconductor.org/versionnum.html.
 """
 
 
@@ -16,7 +16,7 @@ import sys
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
 ERROR_MSG = """Error: Illegal version bump from '%s' to '%s'.
 
-Check http://bioconductor.org/developers/how-to/version-numbering/
+Check http://contributions.bioconductor.org/versionnum.html
 for details.
 """
 

@@ -22,7 +22,7 @@ pushed to the Bioconductor git server. Please make sure that this is
 resolved.
 
 Take a look at the documentation to fix this,
-https://bioconductor.org/developers/how-to/git/sync-existing-repositories/,
+https://contributions.bioconductor.org/git-version-control.html#sync-existing-repositories,
 particularly, point #8 (force Bioconductor master to Github master).
 
 For more information, or help resolving this issue, contact
