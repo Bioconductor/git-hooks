@@ -68,7 +68,7 @@ def pattern_match(text):
     """
     Regex to match pattern in a text file which is a byte string.
     """
-    pattern = re.compile(r"<<<<<<< HEAD")
+    pattern = re.compile(r"(<<<<<<<)(.+)((?:\n.+)+)(=======)(.*)((?:\n.+)+)(>>>>>>>)")
     # Search for pattern in diff
     try:
         match = pattern.search(text.decode('UTF-8'))
