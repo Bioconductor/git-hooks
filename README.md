@@ -127,6 +127,61 @@ git remote set-url origin <path to bare package repo>
 The local testing structure should now be set. Make changes, commit, and try to
 push from the original clone package repo (NOT bare package) 
 
+If you intend to test post-receive hooks. You will also need to rename the hook
+file in the hooks repo of the bare package repository
+```
+cp post-receive-hook post-receive 
+```
+This is all that needs to be done to activate the post receive hooks however to
+run correctly the rss_feed script needs alternations. To test the rss-feed
+locally you will need a copy of the rss feed to use as a base file, change paths
+in the rss_feed.py and comment out the scp to the live server to ensure no
+accidental writing. Start with coping the rss feed from the server as a base:
+
+```
+scp ubuntu@git.bioconductor.org:/home/git/rss/* /home/lori/temp/rss/.
+```
+
+Then in rss_feed.py
+
+1. Change `BASE_PATH` around line 20 to the local path of rss directory
+
+```
+BASE_PATH = "/home/lori/temp/rss/"
+```
+
+2. Comment out around line 130-135 that runs a subprocess to copy over the rss
+feed to the live location
+
+```
+        logging.error(err)
+    # Url for sending the RSS feed
+#    url = 'biocadmin@staging.bioconductor.org' + \
+#        ':/home/biocadmin/bioc-test-web/bioconductor.org' + \
+#        '/assets/developers/rss-feeds/.'
+    # Run subprocess command
+#    cmd = ['scp', 'gitlog.xml', 'gitlog.release.xml', url]
+#    subprocess.check_call(cmd, cwd=BASE_PATH)
+
+    # Release the lock
+    fcntl.lockf(feed, fcntl.LOCK_UN)
+
+```
+
+3. Around line 147 change to True to run local test
+
+```
+if True:
+```
+
+4. Change the fh path around 148 to the local rss directory path
+
+```
+   fh = "/home/lori/temp/rss/gitlog.xml"
+ 
+```
+
+Now you would be able to test the rss_feed post receive hook. 
 
 ### Live location
 
