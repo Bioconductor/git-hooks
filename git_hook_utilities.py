@@ -8,7 +8,7 @@ import subprocess
 from os import path
 
 HOOKS_CONF = "file:///home/git/repositories/admin/hook_maintainer.git"
-LOCAL_HOOKS_CONF = "file:////Users/ni41435_lca/Documents/bioc/hook_maintainer.git"
+LOCAL_HOOKS_CONF = "file:////home/lorikern/Projects/GitBranchRenaming/hooks/attempt2/hook_maintainer.git"
 
 
 def indent_xml(elem, level=0):

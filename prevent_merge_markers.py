@@ -92,7 +92,7 @@ def prevent_merge_markers(oldrev, newrev, refname):
     # Get diff
     diff = subprocess.check_output(['git',
                                     'diff',
-                                    oldrev + ".." + newrev], encoding='UTF-8')
+                                    oldrev + ".." + newrev])
     conflicts = pattern_match(diff)
     # If there are conflicts in string
     if conflicts:
