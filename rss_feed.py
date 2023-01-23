@@ -37,10 +37,10 @@ def rss_feed(oldrev, newrev, refname, length):
         latest_commit = subprocess.check_output([
             "git", "log", oldrev + ".." + newrev,
             "--pretty=format:%H|%an|%ae|%ai"
-        ])
+        ], encoding='UTF-8')
         # Get package name
         package_path = subprocess.check_output([
-            "git", "rev-parse", "--absolute-git-dir"]).strip()
+            "git", "rev-parse", "--absolute-git-dir"], encoding='UTF-8').strip()
         package_name = basename(abspath(package_path)).replace(".git", "")
     except Exception as err:
         logging.error("Exception: %s" % err)
@@ -53,7 +53,7 @@ def rss_feed(oldrev, newrev, refname, length):
             commit_id, author, email, timestamp = commit.split("|")
             commit_msg = subprocess.check_output(["git", "log",
                                                   "--pretty=format:%B",
-                                                  "-n", "1", commit_id])
+                                                  "-n", "1", commit_id], encoding='UTF-8')
             # link for correct branch
             if "RELEASE" in refname:
                 link = package_name
@@ -94,9 +94,9 @@ def write_and_limit_feed(entry_list, length, feed):
     feed.seek(0)
     feed.truncate()
     # Write feed
-    doc.write(feed)
-    feed.write("\n")
-    feed.flush()
+    doc.write(feed.name)
+    #feed.write("\n")
+    #feed.flush()
     return feed
 
 
@@ -114,8 +114,7 @@ def write_rss_feed(oldrev, newrev, refname, length=499):
 
     # Obtain a lock
     fcntl.lockf(feed, fcntl.LOCK_EX)
-
-    # Split feed into correct files
+   # Split feed into correct files
     try:
         if "RELEASE" in refname:  # RSS-feed post-receive hook
             entry = rss_feed(oldrev, newrev, refname, length)
@@ -144,28 +143,29 @@ def write_rss_feed(oldrev, newrev, refname, length=499):
 
 # This is only run when changed to 'True'
 # It is used for local testing
+# Make a copy from /home/git/rss/ on instance to fh location
 if False:
     fh = "/tmp/gitlog.xml"
-    test_feed = open(fh, "r+")
-    refname = None
+    test_feed = open(fh, 'r+')
+    refname = "master"
     revs = subprocess.check_output([
         "git", "log", "-2", "--format=%H"
-    ]).splitlines()
+    ], encoding='UTF-8').splitlines()
     newrev = revs[0].strip()
     oldrev = revs[1].strip()
-    rss_feed(oldrev, newrev, refname, 5)
-    sample_entry = """
-    <item>
-      <title>2309fc133512c4e25d8942c3d0ae6fc198bf9ba9</title>
-      <link>https://www.bioconductor.org</link>
-      <description><![CDATA[
-on't import "$<-" method from the IRanges package (the IRanges package
-     does not export such method)]]></description>
-      <author>Nitesh</author>
-      <pubDate>2017-12-08 17:26:18</pubDate>
-    </item>
-    """
-    rss_entry = fromstring(sample_entry)
-    write_and_limit_feed([rss_entry], 5, fh)
+    rss_entry = rss_feed(oldrev, newrev, refname, 5)
+#    sample_entry = """
+#    <item>
+#      <title>2309fc133512c4e25d8942c3d0ae6fc198bf9ba9</title>
+#      <link>https://www.bioconductor.org</link>
+#      <description><![CDATA[
+#on't import "$<-" method from the IRanges package (the IRanges package
+#     does not export such method)]]></description>
+#      <author>Nitesh</author>
+#      <pubDate>2017-12-08 17:26:18</pubDate>
+#    </item>
+#    """
+#    rss_entry = fromstring(sample_entry)
+    write_and_limit_feed(rss_entry, 5, test_feed)
     test_feed.close()
     sys.exit(0)

@@ -38,7 +38,7 @@ def git_diff(oldrev, newrev, fname):
     diff = subprocess.check_output(["git",
                                     "diff",
                                     oldrev + ".." + newrev,
-                                    "--", fname])
+                                    "--", fname], encoding='UTF-8')
     return diff.splitlines()
 
 
@@ -46,7 +46,7 @@ def git_diff_pre_commit(fname):
     """Git diff for a pre-commit hook."""
     diff = subprocess.check_output(["git",
                                     "diff",
-                                    "--cached", fname])
+                                    "--cached", fname], encoding='UTF-8')
     return diff.splitlines()
 
 
@@ -55,18 +55,18 @@ def git_diff_files(oldrev, newrev):
     files_modified = subprocess.check_output(["git",
                                               "diff",
                                               "--name-only",
-                                              oldrev + ".." + newrev])
+                                              oldrev + ".." + newrev], encoding='UTF-8' )
     return files_modified.splitlines()
 
 
 def get_version_bump(diff):
     """Get the version bumps in DESCRIPTION file."""
-    prev_version = [line.decode().replace("-Version:", "")
+    prev_version = [line.replace("-Version:", "")
                     for line in diff
-                    if line.decode().startswith("-Version")]
-    new_version = [line.decode().replace("+Version:", "")
+                    if line.startswith("-Version")]
+    new_version = [line.replace("+Version:", "")
                    for line in diff
-                   if line.decode().startswith("+Version")]
+                   if line.startswith("+Version")]
     # If versions are equal, no version change
     if prev_version == new_version:
         return None, None
@@ -149,7 +149,7 @@ def prevent_bad_version_numbers(oldrev, newrev, refname):
         oldrev = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
     files_modified = git_diff_files(oldrev, newrev)
     for fname in files_modified:
-        if "DESCRIPTION" in fname.decode():
+        if "DESCRIPTION" in fname:
             diff = git_diff(oldrev, newrev, fname)
             prev_version, new_version = get_version_bump(diff)
             if (prev_version is None) and (new_version is None):

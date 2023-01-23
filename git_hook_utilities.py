@@ -8,7 +8,7 @@ import subprocess
 from os import path
 
 HOOKS_CONF = "file:///home/git/repositories/admin/hook_maintainer.git"
-LOCAL_HOOKS_CONF = "file:////Users/ni41435_lca/Documents/bioc/hook_maintainer.git"
+LOCAL_HOOKS_CONF = "file:////home/lorikern/Projects/GitBranchRenaming/hooks/attempt2/hook_maintainer.git"
 
 
 def indent_xml(elem, level=0):
@@ -41,7 +41,7 @@ def get_hooks_conf():
     """
     # NOTE: Change to HOOKS_CONF to LOCAL_HOOKS_CONF when testing
     cmd = "git archive --remote=" + HOOKS_CONF + " HEAD hooks.conf | tar -x"
-    subprocess.check_output(cmd, shell=True, cwd="/tmp")
+    subprocess.check_output(cmd, shell=True, cwd="/tmp", encoding='UTF-8')
     if path.exists("/tmp/hooks.conf"):
         with open("/tmp/hooks.conf") as f:
             txt = f.read()
