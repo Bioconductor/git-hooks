@@ -28,24 +28,24 @@ def prevent_large_files(oldrev, newrev, refname):
         if refname == "refs/heads/master":
             oldrev = subprocess.check_output([
                 "git", "rev-list", "--max-parents=0", newrev
-            ], encoding='UTF-8').split().pop().strip()
+            ]).split().pop().strip()
         else:
             oldrev = "HEAD"
 
     list_files = subprocess.check_output(["git", "diff",
                                           "--name-only",
                                           "--diff-filter=ACMRT",
-                                          oldrev + ".." + newrev], encoding='UTF-8')
+                                          oldrev + ".." + newrev])
     for fl in list_files.splitlines():
 
         size = subprocess.check_output(["git", "cat-file", "-s",
-                                        newrev + ":" + fl], encoding='UTF-8')
+                                        newrev + ":" + fl.decode()])
         #  Check to see if for some reason we didn't get a size
         size = int(size.strip())
         if size:
             # Compare filesize to MAXSIZE
             mb = 1024.0 * 1024.0
             if size > MAXSIZE:
-                print(ERROR_MSG % (MAXSIZE / mb, fl, size / mb))
+                print(ERROR_MSG % (MAXSIZE / mb, fl.decode(), size / mb))
                 sys.exit(1)
     return

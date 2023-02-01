@@ -18,6 +18,8 @@ from git_hook_utilities import indent_xml
 # Global variables used by post-recieve hook
 ZERO_COMMIT = "0000000000000000000000000000000000000000"
 BASE_PATH = "/home/git/rss/"
+# testing
+#BASE_PATH =  "/home/lorikern/Projects/GitBranchRenaming/hooks/python3HookConversion/rss/"
 ENTRY = """
     <item>
       <title>%s</title>
@@ -33,14 +35,15 @@ ENTRY = """
 def rss_feed(oldrev, newrev, refname, length):
     """Post receive hook to check start Git RSS feed"""
     entry_list = []
+    latest_commit = ""
     try:
         latest_commit = subprocess.check_output([
             "git", "log", oldrev + ".." + newrev,
             "--pretty=format:%H|%an|%ae|%ai"
-        ], encoding='UTF-8')
+        ]).decode()
         # Get package name
         package_path = subprocess.check_output([
-            "git", "rev-parse", "--absolute-git-dir"], encoding='UTF-8').strip()
+            "git", "rev-parse", "--absolute-git-dir"]).strip().decode()
         package_name = basename(abspath(package_path)).replace(".git", "")
     except Exception as err:
         logging.error("Exception: %s" % err)
@@ -53,7 +56,7 @@ def rss_feed(oldrev, newrev, refname, length):
             commit_id, author, email, timestamp = commit.split("|")
             commit_msg = subprocess.check_output(["git", "log",
                                                   "--pretty=format:%B",
-                                                  "-n", "1", commit_id], encoding='UTF-8')
+                                                  "-n", "1", commit_id]).decode()
             # link for correct branch
             if "RELEASE" in refname:
                 link = package_name
@@ -128,8 +131,10 @@ def write_rss_feed(oldrev, newrev, refname, length=499):
         logging.error(err)
     # Url for sending the RSS feed
     url = 'biocadmin@staging.bioconductor.org' + \
-        ':/home/biocadmin/bioc-test-web/bioconductor.org' + \
-        '/assets/developers/rss-feeds/.'
+        ':/home/biocadmin/loriTemp' + \
+        '/rss-feeds/.'
+#        ':/home/biocadmin/bioc-test-web/bioconductor.org' + \
+#        '/assets/developers/rss-feeds/.'
     # Run subprocess command
     cmd = ['scp', 'gitlog.xml', 'gitlog.release.xml', url]
     subprocess.check_call(cmd, cwd=BASE_PATH)
@@ -145,14 +150,14 @@ def write_rss_feed(oldrev, newrev, refname, length=499):
 # It is used for local testing
 # Make a copy from /home/git/rss/ on instance to fh location
 if False:
-    fh = "/tmp/gitlog.xml"
+    fh = "/home/lorikern/Projects/GitBranchRenaming/hooks/python3HookConversion/rss/gitlog.xml"
     test_feed = open(fh, 'r+')
     refname = "master"
     revs = subprocess.check_output([
         "git", "log", "-2", "--format=%H"
-    ], encoding='UTF-8').splitlines()
-    newrev = revs[0].strip()
-    oldrev = revs[1].strip()
+    ]).splitlines()
+    newrev = revs[0].decode().strip()
+    oldrev = revs[1].decode().strip()
     rss_entry = rss_feed(oldrev, newrev, refname, 5)
 #    sample_entry = """
 #    <item>
