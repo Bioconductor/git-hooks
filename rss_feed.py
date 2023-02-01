@@ -40,10 +40,10 @@ def rss_feed(oldrev, newrev, refname, length):
         latest_commit = subprocess.check_output([
             "git", "log", oldrev + ".." + newrev,
             "--pretty=format:%H|%an|%ae|%ai"
-        ]).decode()
+        ]).decode('UTF-8')
         # Get package name
         package_path = subprocess.check_output([
-            "git", "rev-parse", "--absolute-git-dir"]).strip().decode()
+            "git", "rev-parse", "--absolute-git-dir"]).decode('UTF-8').strip()
         package_name = basename(abspath(package_path)).replace(".git", "")
     except Exception as err:
         logging.error("Exception: %s" % err)
@@ -56,7 +56,7 @@ def rss_feed(oldrev, newrev, refname, length):
             commit_id, author, email, timestamp = commit.split("|")
             commit_msg = subprocess.check_output(["git", "log",
                                                   "--pretty=format:%B",
-                                                  "-n", "1", commit_id]).decode()
+                                                  "-n", "1", commit_id]).decode('UTF-8')
             # link for correct branch
             if "RELEASE" in refname:
                 link = package_name
@@ -155,9 +155,9 @@ if False:
     refname = "master"
     revs = subprocess.check_output([
         "git", "log", "-2", "--format=%H"
-    ]).splitlines()
-    newrev = revs[0].decode().strip()
-    oldrev = revs[1].decode().strip()
+    ]).decode('UTF-8').splitlines()
+    newrev = revs[0].strip()
+    oldrev = revs[1].strip()
     rss_entry = rss_feed(oldrev, newrev, refname, 5)
 #    sample_entry = """
 #    <item>

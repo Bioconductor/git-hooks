@@ -41,7 +41,7 @@ def get_hooks_conf():
     """
     # NOTE: Change to HOOKS_CONF to LOCAL_HOOKS_CONF when testing
     cmd = "git archive --remote=" + HOOKS_CONF + " HEAD hooks.conf | tar -x"
-    subprocess.check_output(cmd, shell=True, cwd="/tmp")
+    subprocess.check_output(cmd, shell=True, cwd="/tmp").decode('UTF-8')
     if path.exists("/tmp/hooks.conf"):
         with open("/tmp/hooks.conf") as f:
             txt = f.read()
