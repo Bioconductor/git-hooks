@@ -23,7 +23,7 @@ resolved.
 
 Take a look at the documentation to fix this,
 https://contributions.bioconductor.org/git-version-control.html#sync-existing-repositories,
-particularly, point #8 (force Bioconductor master to Github master).
+particularly, point #8 (force Bioconductor devel to Github devel).
 
 For more information, or help resolving this issue, contact
 <bioc-devel@r-project.org>. Provide the error, the package name and

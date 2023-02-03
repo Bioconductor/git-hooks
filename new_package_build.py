@@ -36,7 +36,7 @@ Github issue where your package is being reviewed.
 
 
 def version_bumped(prev_version, new_version):
-    """Check version in master branch."""
+    """Check version in devel branch."""
     x0, y0, z0 = list(map(int, prev_version.split(".")))
     x, y, z = list(map(int, new_version.split(".")))
     return z0 != z
@@ -66,7 +66,7 @@ def package_start_build(oldrev, newrev, refname):
     The function takes in the standard arguments for a hook and sends
     a POST request to single package builder API endpoint.
     """
-    # new package build should only happen on master branch
+    # new package build should only happen on devel branch
     if oldrev == ZERO_COMMIT:
         oldrev = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 
