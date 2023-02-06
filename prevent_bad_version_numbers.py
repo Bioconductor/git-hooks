@@ -131,6 +131,9 @@ def check_version_bump(prev_version, new_version, refname):
     if "RELEASE" in refname:
         check_version_in_release(prev_version, new_version)
 
+    if "master" in refname:
+        check_version_in_devel(prev_version, new_version)
+
     if "devel" in refname:
         check_version_in_devel(prev_version, new_version)
     return 0

@@ -25,7 +25,7 @@ def prevent_large_files(oldrev, newrev, refname):
 
     # set oldrev properly if this is branch creation
     if oldrev == ZERO_COMMIT:
-        if refname == "refs/heads/devel":
+        if refname == "refs/heads/devel" or refname == "refs/heads/master":
             oldrev = subprocess.check_output([
                 "git", "rev-list", "--max-parents=0", newrev
             ]).split().pop().strip()
