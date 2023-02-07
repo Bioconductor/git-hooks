@@ -104,8 +104,8 @@ def check_version_in_release(prev_version, new_version):
     return
 
 
-def check_version_in_master(prev_version, new_version):
-    """Check version in master branch."""
+def check_version_in_devel(prev_version, new_version):
+    """Check version in devel branch."""
     x0, y0, z0 = list(map(int, prev_version.split(".")))
     x, y, z = list(map(int, new_version.split(".")))
     # x should never change
@@ -132,7 +132,10 @@ def check_version_bump(prev_version, new_version, refname):
         check_version_in_release(prev_version, new_version)
 
     if "master" in refname:
-        check_version_in_master(prev_version, new_version)
+        check_version_in_devel(prev_version, new_version)
+
+    if "devel" in refname:
+        check_version_in_devel(prev_version, new_version)
     return 0
 
 
