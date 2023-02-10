@@ -28,7 +28,7 @@ def prevent_large_files(oldrev, newrev, refname):
         if refname == "refs/heads/devel" or refname == "refs/heads/master":
             oldrev = subprocess.check_output([
                 "git", "rev-list", "--max-parents=0", newrev
-            ]).split().pop().strip()
+            ]).decode().split().pop().strip()
         else:
             oldrev = "HEAD"
 
