@@ -131,10 +131,10 @@ def write_rss_feed(oldrev, newrev, refname, length=499):
         logging.error(err)
     # Url for sending the RSS feed
     url = 'biocadmin@staging.bioconductor.org' + \
-        ':/home/biocadmin/loriTemp' + \
-        '/rss-feeds/.'
-#        ':/home/biocadmin/bioc-test-web/bioconductor.org' + \
-#        '/assets/developers/rss-feeds/.'
+        ':/home/biocadmin/bioc-test-web/bioconductor.org' + \
+        '/assets/developers/rss-feeds/.'
+#        ':/home/biocadmin/loriTemp' + \
+#        '/rss-feeds/.'
     # Run subprocess command
     cmd = ['scp', 'gitlog.xml', 'gitlog.release.xml', url]
     subprocess.check_call(cmd, cwd=BASE_PATH)
