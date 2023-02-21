@@ -40,7 +40,7 @@ to see body of commits.
 
 def get_svn_revision(commit):
     body = subprocess.check_output(["git", "show", "--format=%b", commit])
-    revision = SVN_COMMIT_REGEX.match(body.decode())
+    revision = SVN_COMMIT_REGEX.match(body.decode(errors='ignore'))
     if revision is not None:
         revision = revision.group(1)
     return revision
