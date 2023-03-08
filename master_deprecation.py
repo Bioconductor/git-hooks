@@ -13,7 +13,7 @@ def master_deprecation(oldrev, newrev, refname):
        print("Use of 'master' branch is deprecated on git.bioconductor.org;\n" +
               "  Access to 'master' will eventually be revoked.\n" +
               "  Please use 'devel' to update Bioconductor devel version.\n" +
-              "  See: ")
+              "  See: http://contributions.bioconductor.org/branch-rename-faqs.html")
 
     return
 
